@@ -1,23 +1,28 @@
 import React from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { StyleSheet, View, StatusBar } from "react-native";
 import { Stack } from "expo-router";
 
 const Layout: React.FC = () => {
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      {/* Make sure status bar blends well */}
+      <StatusBar barStyle="dark-content" backgroundColor="#0a1a29" />
       <Stack
         screenOptions={{
-          headerTitle:'HIDDEN GEMS', // Hide header
+          headerShown: false,
+          headerStyle: { backgroundColor: "#0a1a29" },
+          headerTitle: "HIDDEN GEMS",
+          headerTitleStyle: { color: "#ac934e" },
         }}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 0, 
+    marginTop: 0, // Remove any top margin to ensure it's right at the top
   },
 });
 
