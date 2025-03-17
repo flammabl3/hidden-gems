@@ -2,6 +2,7 @@
 // Packages Downloaded 
 // npm expo install 
 // npm install expo-router
+// npm install react-native-maps
 
 //platform , scroll view and keyboard avoiding view are for the input fields to be visible when the keyboard is open
 //MaterialCommunityIcons is for the icons used in the input fields
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   image: {
-    height: 420,
+    height: 390,
     resizeMode: "cover",
     marginBottom: 50,
     borderBottomLeftRadius: 20,
