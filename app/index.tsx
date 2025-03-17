@@ -15,97 +15,119 @@ import { StyleSheet, View, Image, Dimensions, Text, TouchableOpacity, TextInput,
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from "react";
 import { useRouter } from "expo-router";
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Index() {
-  const { width } = Dimensions.get("window");
+  const { height, width } = Dimensions.get("window");  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
 
-      {/* Logo Image */}
-      <Image
-        source={require("../image/big-logo.png")}
-        style={[styles.image, { width }]}
-      />
+        {/* Logo Image */}
+        <LinearGradient
+          style={[styles.imageContainer]}
+          colors={['#2E3E4C', '#031221']}
+          start={{x: 0, y: 0}}
+          end={{x: 0.1, y: 0.7}}
+        >  
+          <Image
+            source={require("../assets/hiddengems-logo.png")}
+            style={[styles.image]}
+          />
+        </LinearGradient> 
 
-      {/* Wrapping only input fields inside a ScrollView */}
-      <KeyboardAvoidingView behavior={Platform.OS === "android" ? "height" : "padding"}>
-        <ScrollView 
-          keyboardShouldPersistTaps="handled" 
-          keyboardDismissMode="on-drag" 
-          contentContainerStyle={styles.scrollContainer}
-        >
+        {/* Wrapping only input fields inside a ScrollView */}
+        <KeyboardAvoidingView behavior={Platform.OS === "android" ? "height" : "padding"}>
+          <ScrollView 
+            keyboardShouldPersistTaps="handled" 
+            keyboardDismissMode="on-drag" 
+            contentContainerStyle={styles.scrollContainer}
+          >
 
-          {/* Email Input field */}
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="email-outline" size={24} color="#201A23" />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your email"
-              placeholderTextColor="#2B3B49"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={setEmail}
-            />
-          </View>
-
-          {/* Password Input field */}
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="lock-outline" size={24} color="#201A23" />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your password"
-              placeholderTextColor="#2B3B49"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
-            />
-            {/* Toggle password visibility */}
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              <MaterialCommunityIcons
-                name={showPassword ? 'eye-outline' : 'eye-off-outline'}
-                size={24}
-                color="#201A23"
+            {/* Email Input field */}
+            <View style={styles.inputContainer}>
+              <MaterialCommunityIcons name="email-outline" size={24} color="#201A23" />
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your email"
+                placeholderTextColor="#2B3B49"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
               />
-            </TouchableOpacity>
-          </View>
+            </View>
 
-        </ScrollView>
-      </KeyboardAvoidingView>
+            {/* Password Input field */}
+            <View style={styles.inputContainer}>
+              <MaterialCommunityIcons name="lock-outline" size={24} color="#201A23" />
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your password"
+                placeholderTextColor="#2B3B49"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+              />
+              {/* Toggle password visibility */}
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <MaterialCommunityIcons
+                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                  size={24}
+                  color="#201A23"
+                />
+              </TouchableOpacity>
+            </View>
 
-      {/* Sign In Button */}
-      <TouchableOpacity style={styles.sign_in_button}>
-        <Text style={styles.sign_in_text}>Sign In</Text>
-      </TouchableOpacity>
+          </ScrollView>
+        </KeyboardAvoidingView>
 
-      {/* Footer */}
-      <View style={styles.footer}>
-        <TouchableOpacity onPress={() => router.push('/register')}>
-          <Text style={styles.account_text}>
-            Don't have an account? <Text style={styles.create_text}>Create now</Text>
-          </Text>
+        {/* Sign In Button */}
+        <TouchableOpacity style={styles.sign_in_button}>
+          <Text style={styles.sign_in_text}>Sign In</Text>
         </TouchableOpacity>
-      </View>
-    </View>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <TouchableOpacity onPress={() => router.push('/register')}>
+            <Text style={styles.account_text}>
+              Don't have an account? <Text style={styles.create_text}>Create now</Text>
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push('./explore/explore')}>
+            <Text>DEBUG: Go to app</Text>
+          </TouchableOpacity>
+        </View>
+
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'space-between',
     backgroundColor: "#5A6B75",
     paddingBottom: 30,
   },
+  imageContainer: {
+    height: '30%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    borderRadius: 10,
+  },
   image: {
-    height: 420,
-    resizeMode: "cover",
-    marginBottom: 50,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    height: '100%',
+    aspectRatio: 1,
+    resizeMode: 'contain'
   },
   scrollContainer: {
     alignItems: 'center',
@@ -116,7 +138,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 6,
     alignItems: "center",
-    marginTop: 100,
     width: 150,
     alignSelf: 'center',
   },
@@ -137,7 +158,6 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     textAlign: "center",
     lineHeight: 28,
-    marginTop: 35,
   },
   create_text: {
     color: "#213141",
@@ -153,9 +173,10 @@ const styles = StyleSheet.create({
     borderColor: '#201A23',
     backgroundColor: '#5A6B75',
     paddingHorizontal: 10,
-    marginBottom: 15,
     alignSelf: 'center',
     width: '80%',
+    marginVertical: 5,
+    padding: 1
   },
   input: {
     flex: 1,
