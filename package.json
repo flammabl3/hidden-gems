@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "expo": "~52.0.38",
+    "expo-linear-gradient": "^14.0.2",
     "expo-router": "^4.0.18",
     "expo-status-bar": "~2.0.1",
     "react": "18.3.1",
@@ -20,6 +21,8 @@
     "@types/react": "~18.3.12",
     "typescript": "^5.3.3"
   },
-  "plugins": ["expo-router"],
+  "plugins": [
+    "expo-router"
+  ],
   "private": true
 }
