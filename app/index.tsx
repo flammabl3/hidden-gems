@@ -6,6 +6,11 @@
 //platform , scroll view and keyboard avoiding view are for the input fields to be visible when the keyboard is open
 //MaterialCommunityIcons is for the icons used in the input fields
 //Dimensions is for the width of the screen
+
+
+//To Do: Regex for email validation, password validation - 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
+//To Do: Add a forgot password text and link to the forgot password page
+//TO Do: Add database logic to check if the email and password are correct and stored in the database
 import { StyleSheet, View, Image, Dimensions, Text, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from "react";
