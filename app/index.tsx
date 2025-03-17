@@ -26,8 +26,8 @@ export default function Index() {
   const router = useRouter();
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
+    <SafeAreaProvider style={styles.container}>
+      <SafeAreaView>
 
         {/* Logo Image */}
         <LinearGradient
@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    borderRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
   image: {
     height: '100%',
