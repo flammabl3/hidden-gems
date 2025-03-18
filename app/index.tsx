@@ -1,17 +1,7 @@
-
-// Packages Downloaded 
-// npm expo install 
-// npm install expo-router
-
-//platform , scroll view and keyboard avoiding view are for the input fields to be visible when the keyboard is open
-//MaterialCommunityIcons is for the icons used in the input fields
-//Dimensions is for the width of the screen
-
-
-//To Do: Regex for email validation, password validation - 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
-//To Do: Add a forgot password text and link to the forgot password page
-//TO Do: Add database logic to check if the email and password are correct and stored in the database
-import { StyleSheet, View, Image, Dimensions, Text, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import { 
+  StyleSheet, View, Image, Dimensions, Text, TouchableOpacity, 
+  TextInput, ScrollView, KeyboardAvoidingView, Platform 
+} from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -26,86 +16,91 @@ export default function Index() {
   const router = useRouter();
 
   return (
-    <SafeAreaProvider style={styles.container}>
-      <SafeAreaView>
-
-        {/* Logo Image */}
-        <LinearGradient
-          style={[styles.imageContainer]}
-          colors={['#2E3E4C', '#031221']}
-          start={{x: 0, y: 0}}
-          end={{x: 0.1, y: 0.7}}
-        >  
-          <Image
-            source={require("../assets/hiddengems-logo.png")}
-            style={[styles.image]}
-          />
-        </LinearGradient> 
-
-        {/* Wrapping only input fields inside a ScrollView */}
-        <KeyboardAvoidingView behavior={Platform.OS === "android" ? "height" : "padding"}>
-          <ScrollView 
-            keyboardShouldPersistTaps="handled" 
-            keyboardDismissMode="on-drag" 
-            contentContainerStyle={styles.scrollContainer}
+    <SafeAreaProvider>
+      <View style={{ flex: 1 }}>
+        <SafeAreaView style={styles.container} edges={["top"]}>
+  
+          {/* Gradient Background with Logo */}
+          <LinearGradient
+            style={styles.imageContainer}
+            colors={['#2E3E4C', '#031221']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0.1, y: 0.7 }}
+          >  
+            <Image
+              source={require("../image/hiddengems-logo.png")}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          </LinearGradient> 
+  
+          {/* KeyboardAvoidingView for the input fields */}
+          <KeyboardAvoidingView 
+            style={styles.keyboardContainer} 
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-
-            {/* Email Input field */}
-            <View style={styles.inputContainer}>
-              <MaterialCommunityIcons name="email-outline" size={24} color="#201A23" />
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your email"
-                placeholderTextColor="#2B3B49"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
-              />
-            </View>
-
-            {/* Password Input field */}
-            <View style={styles.inputContainer}>
-              <MaterialCommunityIcons name="lock-outline" size={24} color="#201A23" />
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your password"
-                placeholderTextColor="#2B3B49"
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
-              />
-              {/* Toggle password visibility */}
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <MaterialCommunityIcons
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
-                  size={24}
-                  color="#201A23"
-                />
-              </TouchableOpacity>
-            </View>
-
-          </ScrollView>
-        </KeyboardAvoidingView>
-
-        {/* Sign In Button */}
-        <TouchableOpacity style={styles.sign_in_button}>
-          <Text style={styles.sign_in_text}>Sign In</Text>
-        </TouchableOpacity>
-
-        {/* Footer */}
-        <View style={styles.footer}>
-          <TouchableOpacity onPress={() => router.push('/register')}>
-            <Text style={styles.account_text}>
-              Don't have an account? <Text style={styles.create_text}>Create now</Text>
-            </Text>
+            <ScrollView 
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={styles.scrollContainer}
+            >
+              {/* Input Fields */}
+              <View style={styles.inputFieldsContainer}>
+                {/* Email Input */}
+                <View style={styles.inputContainer}>
+                  <MaterialCommunityIcons name="email-outline" size={24} color="#201A23" />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter your email"
+                    placeholderTextColor="#2B3B49"
+                    autoCapitalize="none"
+                    value={email}
+                    onChangeText={setEmail}
+                  />
+                </View>
+    
+                {/* Password Input */}
+                <View style={styles.inputContainer}>
+                  <MaterialCommunityIcons name="lock-outline" size={24} color="#201A23" />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter your password"
+                    placeholderTextColor="#2B3B49"
+                    secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
+                  />
+                  <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                    <MaterialCommunityIcons 
+                      name={showPassword ? 'eye-outline' : 'eye-off-outline'} 
+                      size={24} 
+                      color="#201A23" 
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+  
+          {/* Sign In Button - Position it at the bottom */}
+          <TouchableOpacity style={styles.signInButton}>
+            <Text style={styles.signInText}>Sign In</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => router.push('./explore/explore')}>
-            <Text>DEBUG: Go to app</Text>
-          </TouchableOpacity>
-        </View>
-
-      </SafeAreaView>
+  
+          {/* Footer - Position it at the bottom as well */}
+          <View style={styles.footer}>
+            <TouchableOpacity onPress={() => router.push('/register')}>
+              <Text style={styles.accountText}>
+                Don't have an account? <Text style={styles.createText}>Create now</Text>
+              </Text>
+            </TouchableOpacity>
+  
+            <TouchableOpacity onPress={() => router.push('./explore/explore')}>
+              <Text style={styles.debugText}>DEBUG: Go to app</Text>
+            </TouchableOpacity>
+          </View>
+  
+        </SafeAreaView>
+      </View>
     </SafeAreaProvider>
   );
 }
@@ -115,57 +110,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     backgroundColor: "#5A6B75",
-    paddingBottom: 30,
   },
   imageContainer: {
-    height: '30%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    height: '45%',
+    alignItems: "center",
+    justifyContent: "center",
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
   },
   image: {
+    width: '70%',
     height: '100%',
-    aspectRatio: 1,
-    resizeMode: 'contain'
+  },
+  keyboardContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: '5%',
   },
   scrollContainer: {
-    alignItems: 'center',
+    flexGrow: 1, 
+    justifyContent: 'center',
+    paddingVertical: '5%',
   },
-  sign_in_button: {
-    backgroundColor: "#213141",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 6,
-    alignItems: "center",
-    width: 150,
-    alignSelf: 'center',
-  },
-  sign_in_text: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontFamily: "Roboto",
-    textAlign: "center",
-    fontWeight: "bold",
-    lineHeight: 28,
-  },
-  footer: {
-    alignItems: "center",
-  },
-  account_text: {
-    color: "#D8D9DA", 
-    fontSize: 16,
-    fontFamily: "Roboto",
-    textAlign: "center",
-    lineHeight: 28,
-  },
-  create_text: {
-    color: "#213141",
-    fontSize: 16,
-    fontFamily: "Roboto",
-    fontWeight: "bold",
-    textAlign: "center",
+  inputFieldsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingVertical: '5%',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -173,16 +143,46 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: '#201A23',
     backgroundColor: '#5A6B75',
-    paddingHorizontal: 10,
-    alignSelf: 'center',
-    width: '80%',
-    marginVertical: 5,
-    padding: 1
+    paddingHorizontal: '5%',
+    width: '90%', 
+    height: 55, 
+    marginVertical: 12, 
+    borderRadius: 8,
   },
   input: {
     flex: 1,
-    height: 50,
+    height: '100%',
     paddingHorizontal: 10,
     color: '#201A23',
   },
+  signInButton: {
+    backgroundColor: "#213141",
+    paddingVertical: '4%',
+    borderRadius: 8,
+    alignItems: "center",
+    width: '50%', 
+    alignSelf: 'center',
+    marginBottom: '5%',
+  },
+  signInText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  footer: {
+    alignItems: "center",
+    marginBottom: '5%',
+  },
+  accountText: {
+    color: "#D8D9DA", 
+    fontSize: 16,
+  },
+  createText: {
+    color: "#213141",
+    fontWeight: "bold",
+  },
+  debugText: {
+    color: "#D8D9DA",
+    marginTop: 5,
+  }
 });
