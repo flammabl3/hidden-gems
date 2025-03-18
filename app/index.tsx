@@ -108,6 +108,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'space-between',
     backgroundColor: "#5A6B75",
   },
   imageContainer: {
