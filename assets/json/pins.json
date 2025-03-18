@@ -1,0 +1,19 @@
+
+[
+    {
+        "text": "A hidden gem",
+        "location": 
+            {
+                "latitude": 50.917784,
+                "longitude": -114.099777
+            }
+    },
+    {
+        "text": "Another hidden gem",
+        "location": 
+            {
+                "latitude": 50.932648,
+                "longitude": -114.126818
+            }
+    }
+]
