@@ -1,3 +1,11 @@
+// packages : npm expo install , npm install react-native-maps , npm install expo-linear-gradient , npm install expo-router, npm install expo-location, npm install @supabase/supabase-js
+/* todo: 
+1.add the regex to email and password fields
+2.add the forgot password button and do the recovery question logic
+3.hash the password before saving it in the database
+4.use session to track if the user is logged in or not
+*/
+
 import { 
   StyleSheet, View, Image, Dimensions, Text, TouchableOpacity, 
   TextInput, ScrollView, KeyboardAvoidingView, Platform 
@@ -7,6 +15,7 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from "expo-linear-gradient";
+import { loginUser } from '../database/crud_supabase';
 
 export default function Index() {
   const { height, width } = Dimensions.get("window");  
@@ -82,9 +91,22 @@ export default function Index() {
           </KeyboardAvoidingView>
   
           {/* Sign In Button - Position it at the bottom */}
-          <TouchableOpacity style={styles.signInButton}>
-            <Text style={styles.signInText}>Sign In</Text>
-          </TouchableOpacity>
+          <TouchableOpacity 
+          style={styles.signInButton} 
+          onPress={async () => {
+          const { success, error } = await loginUser(email, password);
+    
+          if (success) {
+      // Redirect to the Explore page if login is successful
+          router.push('./explore/explore');
+          } else {
+      // Show an alert if there's an error
+          alert('Login failed: ' + error);
+          }
+          }}
+          >
+  <Text style={styles.signInText}>Sign In</Text>
+</TouchableOpacity>
   
           {/* Footer - Position it at the bottom as well */}
           <View style={styles.footer}>
@@ -92,10 +114,6 @@ export default function Index() {
               <Text style={styles.accountText}>
                 Don't have an account? <Text style={styles.createText}>Create now</Text>
               </Text>
-            </TouchableOpacity>
-  
-            <TouchableOpacity onPress={() => router.push('./explore/explore')}>
-              <Text style={styles.debugText}>DEBUG: Go to app</Text>
             </TouchableOpacity>
           </View>
   

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from "expo-linear-gradient";
+import { registerUser } from '../database/crud_supabase'; 
 
 export default function Register() {
   const { height, width } = Dimensions.get("window");
@@ -131,7 +132,28 @@ export default function Register() {
   
           {/* Create Account Button and Footer */}
           <View style={styles.footerContainer}>
-            <TouchableOpacity style={styles.createAccountButton}>
+            <TouchableOpacity 
+              style={styles.createAccountButton}
+              onPress={async () => {
+                if (password !== confirmPassword) {
+                  alert('Passwords do not match!');
+                  return;
+                }
+
+                const response = await registerUser({
+                  first_name: firstName,
+                  last_name: lastName,
+                  email: email,
+                  password: password
+                });
+
+                if (response.success) {
+                  router.push('/');
+                } else {
+                  alert('Error: ' + response.error);
+                }
+              }}
+            >
               <Text style={styles.createAccountText}>Create Account</Text>
             </TouchableOpacity>
   
@@ -221,17 +243,18 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     justifyContent: 'flex-end',
-    paddingBottom: '5%',
+    paddingBottom: '10%',
   },
   footer: {
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   accountText: {
-    color: "#D8D9DA", 
-    fontSize: 16, 
+    color: "#D6D6D6",
+    fontSize: 16,
   },
   signInText: {
-    color: "#213141",
-    fontWeight: "bold",
+    fontWeight: 'bold',
+    color: '#213141',
   },
 });

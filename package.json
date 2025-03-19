@@ -10,16 +10,17 @@
   },
   "dependencies": {
     "@eva-design/eva": "^2.2.0",
+    "@supabase/supabase-js": "^2.49.1",
     "@ui-kitten/components": "^5.3.1",
     "expo": "~52.0.38",
     "expo-linear-gradient": "^14.0.2",
+    "expo-location": "~18.0.8",
     "expo-router": "~4.0.19",
     "expo-status-bar": "~2.0.1",
     "react": "18.3.1",
     "react-native": "0.76.7",
     "react-native-maps": "^1.20.1",
-    "react-native-svg": "^15.11.2",
-    "expo-location": "~18.0.8"
+    "react-native-svg": "^15.11.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
