@@ -4,27 +4,18 @@
 2.add the forgot password button and do the recovery question logic
 3.hash the password before saving it in the database
 4.use session to track if the user is logged in or not
-5. Show what user is logged in for the last assignment.
 */
 
-// Packages Downloaded 
-// npm expo install 
-// npm install expo-router
-
-//platform , scroll view and keyboard avoiding view are for the input fields to be visible when the keyboard is open
-//MaterialCommunityIcons is for the icons used in the input fields
-//Dimensions is for the width of the screen
-
-
-//To Do: Regex for email validation, password validation - 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
-//To Do: Add a forgot password text and link to the forgot password page
-//TO Do: Add database logic to check if the email and password are correct and stored in the database
-import { StyleSheet, View, Image, Dimensions, Text, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import { 
+  StyleSheet, View, Image, Dimensions, Text, TouchableOpacity, 
+  TextInput, ScrollView, KeyboardAvoidingView, Platform 
+} from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from "expo-linear-gradient";
+import { loginUser } from '../database/crud_supabase';
 
 export default function Index() {
   const { height, width } = Dimensions.get("window");  
@@ -34,7 +25,6 @@ export default function Index() {
   const router = useRouter();
 
   return (
-    
     <SafeAreaProvider>
       <View style={{ flex: 1 }}>
         <SafeAreaView style={styles.container} edges={["top"]}>
@@ -138,57 +128,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     backgroundColor: "#5A6B75",
-    paddingBottom: 30,
   },
   imageContainer: {
-    height: '30%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    height: '45%',
+    alignItems: "center",
+    justifyContent: "center",
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
   },
   image: {
+    width: '70%',
     height: '100%',
-    aspectRatio: 1,
-    resizeMode: 'contain'
+  },
+  keyboardContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: '5%',
   },
   scrollContainer: {
-    alignItems: 'center',
+    flexGrow: 1, 
+    justifyContent: 'center',
+    paddingVertical: '5%',
   },
-  sign_in_button: {
-    backgroundColor: "#213141",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 6,
-    alignItems: "center",
-    width: 150,
-    alignSelf: 'center',
-  },
-  sign_in_text: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontFamily: "Roboto",
-    textAlign: "center",
-    fontWeight: "bold",
-    lineHeight: 28,
-  },
-  footer: {
-    alignItems: "center",
-  },
-  account_text: {
-    color: "#D8D9DA", 
-    fontSize: 16,
-    fontFamily: "Roboto",
-    textAlign: "center",
-    lineHeight: 28,
-  },
-  create_text: {
-    color: "#213141",
-    fontSize: 16,
-    fontFamily: "Roboto",
-    fontWeight: "bold",
-    textAlign: "center",
+  inputFieldsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingVertical: '5%',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -196,16 +161,46 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: '#201A23',
     backgroundColor: '#5A6B75',
-    paddingHorizontal: 10,
-    alignSelf: 'center',
-    width: '80%',
-    marginVertical: 5,
-    padding: 1
+    paddingHorizontal: '5%',
+    width: '90%', 
+    height: 55, 
+    marginVertical: 12, 
+    borderRadius: 8,
   },
   input: {
     flex: 1,
-    height: 50,
+    height: '100%',
     paddingHorizontal: 10,
     color: '#201A23',
   },
+  signInButton: {
+    backgroundColor: "#213141",
+    paddingVertical: '4%',
+    borderRadius: 8,
+    alignItems: "center",
+    width: '50%', 
+    alignSelf: 'center',
+    marginBottom: '5%',
+  },
+  signInText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  footer: {
+    alignItems: "center",
+    marginBottom: '5%',
+  },
+  accountText: {
+    color: "#D8D9DA", 
+    fontSize: 16,
+  },
+  createText: {
+    color: "#213141",
+    fontWeight: "bold",
+  },
+  debugText: {
+    color: "#D8D9DA",
+    marginTop: 5,
+  }
 });

@@ -16,7 +16,7 @@ export default function MyTabs() {
                 tabBarIcon: ({ color, size }) => {
 
                     // Set icon based on the route name
-                    if (route.name === 'Map') {
+                    if (route.name === 'Explore') {
                         return <MaterialCommunityIcons name={"map"} color={color} size={size} />;
                     } else {
                         return <MaterialCommunityIcons name={"help-circle-outline"} color={color} size={size} />;
