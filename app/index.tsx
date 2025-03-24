@@ -1,3 +1,11 @@
+// packages : npm expo install , npm install react-native-maps , npm install expo-linear-gradient , npm install expo-router, npm install expo-location, npm install @supabase/supabase-js
+/* todo: 
+1.add the regex to email and password fields
+2.add the forgot password button and do the recovery question logic
+3.hash the password before saving it in the database
+4.use session to track if the user is logged in or not
+5. Show what user is logged in for the last assignment.
+*/
 
 // Packages Downloaded 
 // npm expo install 
@@ -26,86 +34,101 @@ export default function Index() {
   const router = useRouter();
 
   return (
-    <SafeAreaProvider style={styles.container}>
-      <SafeAreaView>
-
-        {/* Logo Image */}
-        <LinearGradient
-          style={[styles.imageContainer]}
-          colors={['#2E3E4C', '#031221']}
-          start={{x: 0, y: 0}}
-          end={{x: 0.1, y: 0.7}}
-        >  
-          <Image
-            source={require("../assets/hiddengems-logo.png")}
-            style={[styles.image]}
-          />
-        </LinearGradient> 
-
-        {/* Wrapping only input fields inside a ScrollView */}
-        <KeyboardAvoidingView behavior={Platform.OS === "android" ? "height" : "padding"}>
-          <ScrollView 
-            keyboardShouldPersistTaps="handled" 
-            keyboardDismissMode="on-drag" 
-            contentContainerStyle={styles.scrollContainer}
+    
+    <SafeAreaProvider>
+      <View style={{ flex: 1 }}>
+        <SafeAreaView style={styles.container} edges={["top"]}>
+  
+          {/* Gradient Background with Logo */}
+          <LinearGradient
+            style={styles.imageContainer}
+            colors={['#2E3E4C', '#031221']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0.1, y: 0.7 }}
+          >  
+            <Image
+              source={require("../image/hiddengems-logo.png")}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          </LinearGradient> 
+  
+          {/* KeyboardAvoidingView for the input fields */}
+          <KeyboardAvoidingView 
+            style={styles.keyboardContainer} 
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-
-            {/* Email Input field */}
-            <View style={styles.inputContainer}>
-              <MaterialCommunityIcons name="email-outline" size={24} color="#201A23" />
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your email"
-                placeholderTextColor="#2B3B49"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
-              />
-            </View>
-
-            {/* Password Input field */}
-            <View style={styles.inputContainer}>
-              <MaterialCommunityIcons name="lock-outline" size={24} color="#201A23" />
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your password"
-                placeholderTextColor="#2B3B49"
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
-              />
-              {/* Toggle password visibility */}
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <MaterialCommunityIcons
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
-                  size={24}
-                  color="#201A23"
-                />
-              </TouchableOpacity>
-            </View>
-
-          </ScrollView>
-        </KeyboardAvoidingView>
-
-        {/* Sign In Button */}
-        <TouchableOpacity style={styles.sign_in_button}>
-          <Text style={styles.sign_in_text}>Sign In</Text>
-        </TouchableOpacity>
-
-        {/* Footer */}
-        <View style={styles.footer}>
-          <TouchableOpacity onPress={() => router.push('/register')}>
-            <Text style={styles.account_text}>
-              Don't have an account? <Text style={styles.create_text}>Create now</Text>
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => router.push('./explore/explore')}>
-            <Text>DEBUG: Go to app</Text>
-          </TouchableOpacity>
-        </View>
-
-      </SafeAreaView>
+            <ScrollView 
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={styles.scrollContainer}
+            >
+              {/* Input Fields */}
+              <View style={styles.inputFieldsContainer}>
+                {/* Email Input */}
+                <View style={styles.inputContainer}>
+                  <MaterialCommunityIcons name="email-outline" size={24} color="#201A23" />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter your email"
+                    placeholderTextColor="#2B3B49"
+                    autoCapitalize="none"
+                    value={email}
+                    onChangeText={setEmail}
+                  />
+                </View>
+    
+                {/* Password Input */}
+                <View style={styles.inputContainer}>
+                  <MaterialCommunityIcons name="lock-outline" size={24} color="#201A23" />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter your password"
+                    placeholderTextColor="#2B3B49"
+                    secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
+                  />
+                  <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                    <MaterialCommunityIcons 
+                      name={showPassword ? 'eye-outline' : 'eye-off-outline'} 
+                      size={24} 
+                      color="#201A23" 
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+  
+          {/* Sign In Button - Position it at the bottom */}
+          <TouchableOpacity 
+          style={styles.signInButton} 
+          onPress={async () => {
+          const { success, error } = await loginUser(email, password);
+    
+          if (success) {
+      // Redirect to the Explore page if login is successful
+          router.push('./main-app/explore/explore');
+          } else {
+      // Show an alert if there's an error
+          alert('Login failed: ' + error);
+          }
+          }}
+          >
+  <Text style={styles.signInText}>Sign In</Text>
+</TouchableOpacity>
+  
+          {/* Footer - Position it at the bottom as well */}
+          <View style={styles.footer}>
+            <TouchableOpacity onPress={() => router.push('/register')}>
+              <Text style={styles.accountText}>
+                Don't have an account? <Text style={styles.createText}>Create now</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+  
+        </SafeAreaView>
+      </View>
     </SafeAreaProvider>
   );
 }

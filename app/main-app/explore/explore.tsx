@@ -1,8 +1,9 @@
-import MapComponent from "../../components/map-component";
+import MapComponent from "../../../components/map-component";
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 
 import * as Location from 'expo-location';
 import { useEffect, useState } from "react";
+
 
 export default function Explore() {
     const [location, setLocation] = useState<Location.LocationObject | null>(null);

@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@eva-design/eva": "^2.2.0",
+    "@react-navigation/bottom-tabs": "^7.3.1",
+    "@supabase/supabase-js": "^2.49.1",
     "@ui-kitten/components": "^5.3.1",
     "expo": "~52.0.38",
     "expo-linear-gradient": "^14.0.2",
