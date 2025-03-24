@@ -6,14 +6,18 @@ import {
     useTheme,
   } from "@react-navigation/native";
   
-  import { Slot } from 'expo-router';
+import { Slot } from 'expo-router';
 import { Platform } from "react-native";
+import { AuthProvider } from "../database/auth-context";
+
   
 export default function RootLayout() {
     return (
+      <AuthProvider>
         <ThemeProvider value={DarkTheme}>
             <Slot />
         </ThemeProvider>
+      </AuthProvider>
     );
 }
 

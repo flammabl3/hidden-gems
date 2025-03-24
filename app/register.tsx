@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from "expo-linear-gradient";
-import { registerUser } from '../database/crud_supabase'; 
+import { useAuth } from "../database/auth-context";
 
 export default function Register() {
   const { height, width } = Dimensions.get("window");
@@ -19,6 +19,19 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+
+  
+  const { register, loading } = useAuth();
+
+  async function signUp() {
+    const { success, error } = await register({first_name: firstName, last_name: lastName, email: email, password: password});
+
+    if (error) {
+      alert('Registration failed: ' + error);
+    } else if (success) {
+      router.push('/');
+    }
+  }
 
   return (
     <SafeAreaProvider>
@@ -140,18 +153,8 @@ export default function Register() {
                   return;
                 }
 
-                const response = await registerUser({
-                  first_name: firstName,
-                  last_name: lastName,
-                  email: email,
-                  password: password
-                });
+                await signUp();
 
-                if (response.success) {
-                  router.push('/');
-                } else {
-                  alert('Error: ' + response.error);
-                }
               }}
             >
               <Text style={styles.createAccountText}>Create Account</Text>

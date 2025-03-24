@@ -15,14 +15,25 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from "expo-linear-gradient";
-import { loginUser } from '../database/crud_supabase';
+import { useAuth } from "../database/auth-context";
 
 export default function Index() {
   const { height, width } = Dimensions.get("window");  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+
+  async function signInWithEmail() {
+    const { success, error } = await login(email, password);
+
+    if (error) {
+      alert('Login failed: ' + error);
+    } else if (success) {
+      router.push('./main-app/explore/explore');
+    }
+  }
 
   return (
     <SafeAreaProvider>
@@ -92,21 +103,13 @@ export default function Index() {
   
           {/* Sign In Button - Position it at the bottom */}
           <TouchableOpacity 
-          style={styles.signInButton} 
-          onPress={async () => {
-          const { success, error } = await loginUser(email, password);
-    
-          if (success) {
-      // Redirect to the Explore page if login is successful
-          router.push('./main-app/explore/explore');
-          } else {
-      // Show an alert if there's an error
-          alert('Login failed: ' + error);
-          }
-          }}
+            style={styles.signInButton} 
+            onPress={async () => {
+              await signInWithEmail();
+            }}
           >
-  <Text style={styles.signInText}>Sign In</Text>
-</TouchableOpacity>
+            <Text style={styles.signInText}>Sign In</Text>
+          </TouchableOpacity>
   
           {/* Footer - Position it at the bottom as well */}
           <View style={styles.footer}>
@@ -114,6 +117,9 @@ export default function Index() {
               <Text style={styles.accountText}>
                 Don't have an account? <Text style={styles.createText}>Create now</Text>
               </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('./main-app/explore/explore')}>
+              <Text>go to app</Text>
             </TouchableOpacity>
           </View>
   
