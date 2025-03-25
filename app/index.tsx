@@ -35,24 +35,7 @@ export default function Index() {
     }
   }
 
-  useEffect(() => {
-    console.log('useEffect triggered'); // Log to confirm useEffect is running
-  
-    async function checkSession() {
-      console.log('checkSession function called'); // Log to confirm function execution
-      const session = useAuth().session;
-      console.log('Session:', session); // Log the session value
-  
-      if (session) {
-        console.log('Session exists, navigating to explore');
-        router.push('./main-app/explore/explore');
-      } else {
-        console.log('No session found');
-      }
-    }
-  
-    checkSession();
-  }, []);
+ 
 
   return (
     <SafeAreaProvider>
@@ -138,9 +121,9 @@ export default function Index() {
                 Don't have an account? <Text style={styles.createText}>Create now</Text>
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('./main-app/explore/explore')}>
+            {/*<TouchableOpacity onPress={() => router.push('./main-app/explore/explore')}>
               <Text>go to app</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>*/}
           </View>
   
         </SafeAreaView>

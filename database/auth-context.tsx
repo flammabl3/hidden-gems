@@ -114,7 +114,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const email = session?.user.email;
       const uid = session?.user.id;
 
-      console.log(uid);
       if (!email) {
         return { success: false, error: 'No email found in session' };
       }
