@@ -144,7 +144,7 @@ export default function Register() {
           </KeyboardAvoidingView>
   
           {/* Create Account Button and Footer */}
-          <View style={styles.footerContainer}>
+          <View style={styles.footer}>
             <TouchableOpacity 
               style={styles.createAccountButton}
               onPress={async () => {
@@ -159,16 +159,14 @@ export default function Register() {
             >
               <Text style={styles.createAccountText}>Create Account</Text>
             </TouchableOpacity>
-  
-            {/* Footer */}
-            <View style={styles.footer}>
-              <TouchableOpacity onPress={() => router.push('/')}>
-                <Text style={styles.accountText}>
-                  Already have an account? <Text style={styles.signInText}>Sign In</Text>
-                </Text>
-              </TouchableOpacity>
-            </View>
+
+            <TouchableOpacity onPress={() => router.push('/')}>
+              <Text style={styles.accountText}>
+                Already have an account? <Text style={styles.signInText}>Sign In</Text>
+              </Text>
+            </TouchableOpacity>
           </View>
+
   
         </SafeAreaView>
       </View>
@@ -237,20 +235,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: '50%', 
     alignSelf: 'center',
-    marginBottom: '10%',
+    marginBottom: '5%',
   },
   createAccountText: {
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "bold",
   },
-  footerContainer: {
-    justifyContent: 'flex-end',
-    paddingBottom: '10%',
-  },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "column",
+    alignItems: "center",
+    marginBottom: '5%',
   },
   accountText: {
     color: "#D6D6D6",

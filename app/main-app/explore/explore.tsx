@@ -43,7 +43,7 @@ export default function Explore() {
 
     return(
         <SafeAreaView style={styles.container}>
-            <Text>Hello {userInfo?.first_name}</Text>
+            <Text style={styles.topText}>Hello, {userInfo?.first_name}</Text>
             {errorMsg && <Text>{errorMsg}</Text>}
 
             <View style={styles.mapContainer}>
@@ -61,6 +61,11 @@ export default function Explore() {
 }
 
 const styles = StyleSheet.create({
+    topText:{
+        fontSize: 20,
+        color: 'white',
+        padding: 10,
+    },
     container: {
         height: '100%',
         width: '100%',

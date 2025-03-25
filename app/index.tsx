@@ -11,7 +11,7 @@ import {
   TextInput, ScrollView, KeyboardAvoidingView, Platform 
 } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from "expo-linear-gradient";
@@ -34,6 +34,25 @@ export default function Index() {
       router.push('./main-app/explore/explore');
     }
   }
+
+  useEffect(() => {
+    console.log('useEffect triggered'); // Log to confirm useEffect is running
+  
+    async function checkSession() {
+      console.log('checkSession function called'); // Log to confirm function execution
+      const session = useAuth().session;
+      console.log('Session:', session); // Log the session value
+  
+      if (session) {
+        console.log('Session exists, navigating to explore');
+        router.push('./main-app/explore/explore');
+      } else {
+        console.log('No session found');
+      }
+    }
+  
+    checkSession();
+  }, []);
 
   return (
     <SafeAreaProvider>
@@ -101,18 +120,19 @@ export default function Index() {
             </ScrollView>
           </KeyboardAvoidingView>
   
-          {/* Sign In Button - Position it at the bottom */}
-          <TouchableOpacity 
-            style={styles.signInButton} 
-            onPress={async () => {
-              await signInWithEmail();
-            }}
-          >
-            <Text style={styles.signInText}>Sign In</Text>
-          </TouchableOpacity>
+          {/* Footer - Position it at the bottom */}
+          <View style={styles.footer}> 
+            {/* Sign In Button - Position it at the bottom */}
+            <TouchableOpacity 
+              style={styles.signInButton} 
+              onPress={async () => {
+                await signInWithEmail();
+              }}
+            >
+              <Text style={styles.signInText}>Sign In</Text>
+            </TouchableOpacity>
   
-          {/* Footer - Position it at the bottom as well */}
-          <View style={styles.footer}>
+
             <TouchableOpacity onPress={() => router.push('/register')}>
               <Text style={styles.accountText}>
                 Don't have an account? <Text style={styles.createText}>Create now</Text>
@@ -194,6 +214,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   footer: {
+    flexDirection: "column",
     alignItems: "center",
     marginBottom: '5%',
   },

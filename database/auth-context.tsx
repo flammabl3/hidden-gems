@@ -73,14 +73,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (userData: UserData): Promise<AuthResponse> => {
     try {
+      
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
       });
+
       if (authError) {
         console.error("Error during sign-up:", authError.message);
         return { success: false, error: authError.message };
       }
+
       const { error: dbError } = await supabase
         .from('users') 
         .insert([
@@ -91,10 +94,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             password: userData.password, 
           },
         ]);
+      
+        //should probably delete auth users when a failure happens with the db.
       if (dbError) {
         console.error("Error adding user to the database:", dbError.message);
         return { success: false, error: dbError.message };
       }
+
+
       return { success: true, user: authData?.user || null };
     } catch (error) {
       console.error("Unexpected error during registration:", error);
@@ -105,10 +112,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getUserInfo = async (): Promise<{ success: boolean; data?: { first_name: string; last_name: string }; error?: string }> => {
     try {
       const email = session?.user.email;
+      const uid = session?.user.id;
+
+      console.log(uid);
       if (!email) {
         return { success: false, error: 'No email found in session' };
       }
-  
+
       const { data, error } = await supabase
         .from('users') 
         .select('first_name, last_name') 
@@ -143,5 +153,6 @@ export const useAuth = (): AuthContextType => {
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
+  
   return context;
 };
