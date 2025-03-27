@@ -27,6 +27,8 @@ export default function Explore() {
     const [places, setPlaces] = useState<Place[]>([]);
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
+    const styles = makeStyles();
+
     const [focusedLocation, setFocusedLocation] = useState<{
         latitude: number;
         longitude: number;
@@ -105,9 +107,9 @@ export default function Explore() {
             data={places}
             renderItem={({item, index})=>{return(
                 <TouchableOpacity style={[styles.listItem, index == selectedIndex && styles.listItemHighlight]} onPress={() => handlePlacePress(item, index)}>
-                    <Text> {item.name} </Text>
-                    {item.description && <Text> {item.description} </Text>}
-                    <Text>{item.address ? item.address : `${item.location.latitude}, ${item.location.longitude}`}</Text>
+                    <Text style={styles.text}> {item.name} </Text>
+                    {item.description && <Text style={styles.text}> {item.description} </Text>}
+                    <Text style={styles.text}>{item.address ? item.address : `${item.location.latitude}, ${item.location.longitude}`}</Text>
                 </TouchableOpacity>
             )}}
             />
@@ -116,38 +118,48 @@ export default function Explore() {
     )
 }
 
-const styles = StyleSheet.create({
+import { ExtendedTheme, useTheme } from "@react-navigation/native";
+const makeStyles = () => {
+  const {colors} = useTheme() as ExtendedTheme;
+  const styles = StyleSheet.create({
     topText:{
         fontSize: 20,
-        color: 'white',
+        color: colors.text,
         padding: 10,
     },
     container: {
         height: '100%',
         width: '100%',
-        backgroundColor: '#5A6B75',
+        backgroundColor: colors.background,
     },
     mapContainer: {
-        height: '50%',
-        width: '90%',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        alignSelf: 'center'
-      },
-      list: {
-        width: '100%', 
-        padding: 10,
-        justifyContent: 'center', 
-      },
-      listItem: {
-        backgroundColor: 'rgb(225, 225, 225)',
-        width: '100%', 
-        height: 90, 
-        marginVertical: 10,
-        justifyContent: 'center', 
-        alignItems: 'center', 
-      },
-      listItemHighlight: {
-        backgroundColor: 'rgb(85, 83, 193)',
-      },
-});
+      height: '50%',
+      width: '90%',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      alignSelf: 'center'
+    },
+    list: {
+      width: '100%', 
+      padding: 10,
+      justifyContent: 'center', 
+    },
+    listItem: {
+      backgroundColor: colors.primary,
+      color: colors.text,
+      width: '100%', 
+      height: 90, 
+      marginVertical: 10,
+      justifyContent: 'center', 
+      alignItems: 'center', 
+    },
+    listItemHighlight: {
+      backgroundColor: colors.secondary,
+    },
+    text: {
+      color: colors.text, 
+    },
+  });
+
+  return styles;
+}
