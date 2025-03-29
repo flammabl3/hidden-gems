@@ -3,11 +3,13 @@ import {
   TextInput, ScrollView, KeyboardAvoidingView, Platform 
 } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from "expo-linear-gradient";
-import { registerUser } from '../database/crud_supabase'; 
+import { useAuth } from "../database/auth-context";
+import { useTranslation } from 'react-i18next';
+import { ExtendedTheme, useTheme } from "@react-navigation/native";
 
 export default function Register() {
   const { height, width } = Dimensions.get("window");
@@ -19,6 +21,105 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation();
+
+    const {colors} = useTheme() as ExtendedTheme;
+    const styles = useMemo(() => 
+      StyleSheet.create({
+        container: {
+          flex: 1,
+          backgroundColor: colors.background,
+        },
+        imageContainer: {
+          height: '45%',
+          alignItems: "center",
+          justifyContent: "center",
+          borderBottomLeftRadius: 10,
+          borderBottomRightRadius: 10,
+        },
+        image: {
+          width: '70%',
+          height: '100%',
+        },
+        scrollContainer: {
+          flexGrow: 1, 
+          justifyContent: 'center',
+          paddingVertical: '5%',
+        },
+        inputFieldsContainer: {
+          flex: 1,
+          justifyContent: 'center',
+          paddingVertical: '5%',
+        },
+        row: {
+          alignSelf: 'center',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          width: '80%',
+        },
+        halfWidth: {
+          width: '48%',
+        },
+        inputContainer: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          alignSelf: 'center',
+          borderBottomWidth: 2,
+          borderColor: colors.border,
+          backgroundColor: colors.background,
+          paddingHorizontal: '5%',
+          width: '80%', 
+          height: 55, 
+          marginVertical: 12, 
+          borderRadius: 8,
+        },
+        input: {
+          flex: 1,
+          height: '100%',
+          paddingHorizontal: 10,
+          color: colors.background,
+        },
+        createAccountButton: {
+          backgroundColor: colors.primary,
+          paddingVertical: '4%',
+          borderRadius: 8,
+          alignItems: "center",
+          width: '50%', 
+          alignSelf: 'center',
+          marginBottom: '5%',
+        },
+        createAccountText: {
+          color: colors.text,
+          fontSize: 18,
+          fontWeight: "bold",
+        },
+        footer: {
+          flexDirection: "column",
+          alignItems: "center",
+          marginBottom: '5%',
+        },
+        accountText: {
+          color: colors.text,
+          fontSize: 16,
+        },
+        signInText: {
+          fontWeight: 'bold',
+          color: colors.primary,
+        }
+      }), [colors]
+    );
+  
+  const { register, loading } = useAuth();
+
+  async function signUp() {
+    const { success, error } = await register({first_name: firstName, last_name: lastName, email: email, password: password});
+
+    if (error) {
+      alert('Registration failed: ' + error);
+    } else if (success) {
+      router.push('/');
+    }
+  }
 
   return (
     <SafeAreaProvider>
@@ -131,7 +232,7 @@ export default function Register() {
           </KeyboardAvoidingView>
   
           {/* Create Account Button and Footer */}
-          <View style={styles.footerContainer}>
+          <View style={styles.footer}>
             <TouchableOpacity 
               style={styles.createAccountButton}
               onPress={async () => {
@@ -140,32 +241,20 @@ export default function Register() {
                   return;
                 }
 
-                const response = await registerUser({
-                  first_name: firstName,
-                  last_name: lastName,
-                  email: email,
-                  password: password
-                });
+                await signUp();
 
-                if (response.success) {
-                  router.push('/');
-                } else {
-                  alert('Error: ' + response.error);
-                }
               }}
             >
               <Text style={styles.createAccountText}>Create Account</Text>
             </TouchableOpacity>
-  
-            {/* Footer */}
-            <View style={styles.footer}>
-              <TouchableOpacity onPress={() => router.push('/')}>
-                <Text style={styles.accountText}>
-                  Already have an account? <Text style={styles.signInText}>Sign In</Text>
-                </Text>
-              </TouchableOpacity>
-            </View>
+
+            <TouchableOpacity onPress={() => router.push('/')}>
+              <Text style={styles.accountText}>
+                Already have an account? <Text style={styles.signInText}>Sign In</Text>
+              </Text>
+            </TouchableOpacity>
           </View>
+
   
         </SafeAreaView>
       </View>
@@ -173,88 +262,3 @@ export default function Register() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#5A6B75",
-  },
-  imageContainer: {
-    height: '45%',
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  image: {
-    width: '70%',
-    height: '100%',
-  },
-  scrollContainer: {
-    flexGrow: 1, 
-    justifyContent: 'center',
-    paddingVertical: '5%',
-  },
-  inputFieldsContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingVertical: '5%',
-  },
-  row: {
-    alignSelf: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '80%',
-  },
-  halfWidth: {
-    width: '48%',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'center',
-    borderBottomWidth: 2,
-    borderColor: '#201A23',
-    backgroundColor: '#5A6B75',
-    paddingHorizontal: '5%',
-    width: '80%', 
-    height: 55, 
-    marginVertical: 12, 
-    borderRadius: 8,
-  },
-  input: {
-    flex: 1,
-    height: '100%',
-    paddingHorizontal: 10,
-    color: '#201A23',
-  },
-  createAccountButton: {
-    backgroundColor: "#213141",
-    paddingVertical: '4%',
-    borderRadius: 8,
-    alignItems: "center",
-    width: '50%', 
-    alignSelf: 'center',
-    marginBottom: '10%',
-  },
-  createAccountText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  footerContainer: {
-    justifyContent: 'flex-end',
-    paddingBottom: '10%',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  accountText: {
-    color: "#D6D6D6",
-    fontSize: 16,
-  },
-  signInText: {
-    fontWeight: 'bold',
-    color: '#213141',
-  },
-});
