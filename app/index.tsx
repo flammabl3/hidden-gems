@@ -1,4 +1,4 @@
-// packages : npm expo install , npm install react-native-maps , npm install expo-linear-gradient , npm install expo-router, npm install expo-location, npm install @supabase/supabase-js
+// packages : npm expo install , npm install react-native-maps , npm install expo-linear-gradient , npm install expo-router, npm install expo-location, npm install @supabase/supabase-js,
 /* todo: 
 1.add the regex to email and password fields
 2.add the forgot password button and do the recovery question logic
@@ -67,14 +67,13 @@ export default function Index() {
         flexDirection: 'row',
         alignItems: 'center',
         borderBottomWidth: 2,
-        borderColor: colors.border,
+        borderColor: colors.text,
         backgroundColor: colors.background,
         color: colors.text,
         paddingHorizontal: '5%',
         width: '90%', 
         height: 55, 
         marginVertical: 12, 
-        borderRadius: 8,
       },
       input: {
         flex: 1,

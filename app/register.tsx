@@ -23,6 +23,8 @@ export default function Register() {
   const router = useRouter();
   const { t } = useTranslation();
 
+ 
+
     const {colors} = useTheme() as ExtendedTheme;
     const styles = useMemo(() => 
       StyleSheet.create({
@@ -65,19 +67,18 @@ export default function Register() {
           alignItems: 'center',
           alignSelf: 'center',
           borderBottomWidth: 2,
-          borderColor: colors.border,
+          borderColor: colors.text,
           backgroundColor: colors.background,
           paddingHorizontal: '5%',
           width: '80%', 
           height: 55, 
-          marginVertical: 12, 
-          borderRadius: 8,
+          marginVertical: 12,
         },
         input: {
           flex: 1,
           height: '100%',
           paddingHorizontal: 10,
-          color: colors.background,
+          color: colors.text,
         },
         createAccountButton: {
           backgroundColor: colors.primary,
@@ -112,14 +113,42 @@ export default function Register() {
   const { register, loading } = useAuth();
 
   async function signUp() {
-    const { success, error } = await register({first_name: firstName, last_name: lastName, email: email, password: password});
 
-    if (error) {
-      alert('Registration failed: ' + error);
-    } else if (success) {
-      router.push('/');
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address.');
+      return;
     }
-  }
+  
+    if (!passwordRegex.test(password)) {
+      alert('Password must be at least 8 characters long, contain 1 uppercase letter, 1 lowercase letter, 1 number and a special character .');
+      return;
+    }
+  
+    if (password !== confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+  
+   
+  
+      const { success, error } = await register({ 
+        first_name: firstName, 
+        last_name: lastName, 
+        email: email, 
+        password: password
+      });
+  
+      if (error) {
+        alert('Registration failed: ' + error);
+      } else if (success) {
+        router.push('/');
+      }
+    }
+  
+  
 
   return (
     <SafeAreaProvider>
@@ -154,21 +183,21 @@ export default function Register() {
                 {/* First Name & Last Name */}
                 <View style={styles.row}>
                   <View style={[styles.inputContainer, styles.halfWidth]}>
-                    <MaterialCommunityIcons name="account-outline" size={24} color="#201A23" />
+                    <MaterialCommunityIcons name="account-outline" size={24} color={colors.text} />
                     <TextInput
                       style={styles.input}
                       placeholder="First Name"
-                      placeholderTextColor="#2B3B49"
+                      placeholderTextColor={colors.text}
                       value={firstName}
                       onChangeText={setFirstName}
                     />
                   </View>
                   <View style={[styles.inputContainer, styles.halfWidth]}>
-                    <MaterialCommunityIcons name="account-outline" size={24} color="#201A23" />
+                    <MaterialCommunityIcons name="account-outline" size={24} color={colors.text} />
                     <TextInput
                       style={styles.input}
                       placeholder="Last Name"
-                      placeholderTextColor="#2B3B49"
+                      placeholderTextColor={colors.text}
                       value={lastName}
                       onChangeText={setLastName}
                     />
@@ -177,11 +206,11 @@ export default function Register() {
 
                 {/* Email Input */}
                 <View style={styles.inputContainer}>
-                  <MaterialCommunityIcons name="email-outline" size={24} color="#201A23" />
+                  <MaterialCommunityIcons name="email-outline" size={24} color={colors.text} />
                   <TextInput
                     style={styles.input}
                     placeholder="Enter your email"
-                    placeholderTextColor="#2B3B49"
+                    placeholderTextColor={colors.text}
                     autoCapitalize="none"
                     value={email}
                     onChangeText={setEmail}
@@ -190,11 +219,11 @@ export default function Register() {
 
                 {/* Password Input */}
                 <View style={styles.inputContainer}>
-                  <MaterialCommunityIcons name="lock-outline" size={24} color="#201A23" />
+                  <MaterialCommunityIcons name="lock-outline" size={24} color={colors.text} />
                   <TextInput
                     style={styles.input}
                     placeholder="Enter your password"
-                    placeholderTextColor="#2B3B49"
+                    placeholderTextColor={colors.text}
                     secureTextEntry={!showPassword}
                     value={password}
                     onChangeText={setPassword}
@@ -203,18 +232,18 @@ export default function Register() {
                     <MaterialCommunityIcons
                       name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                       size={24}
-                      color="#201A23"
+                      color={colors.text}
                     />
                   </TouchableOpacity>
                 </View>
 
                 {/* Confirm Password Input */}
                 <View style={styles.inputContainer}>
-                  <MaterialCommunityIcons name="lock-outline" size={24} color="#201A23" />
+                  <MaterialCommunityIcons name="lock-outline" size={24} color={colors.text} />
                   <TextInput
                     style={styles.input}
                     placeholder="Confirm password"
-                    placeholderTextColor="#2B3B49"
+                    placeholderTextColor={colors.text}
                     secureTextEntry={!showConfirmPassword}
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
@@ -223,7 +252,7 @@ export default function Register() {
                     <MaterialCommunityIcons
                       name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
                       size={24}
-                      color="#201A23"
+                      color={colors.text}
                     />
                   </TouchableOpacity>
                 </View>
