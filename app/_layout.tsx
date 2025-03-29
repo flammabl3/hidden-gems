@@ -33,9 +33,9 @@ const CustomDarkTheme: ExtendedTheme = {
     primary: "rgb(201, 178, 104)", // Keeping the yellow highlights
     secondary: "rgb(172, 147, 78)", // Slightly adjusted for contrast
     background: "rgb(33, 49, 65)", // Dark blue as the main background
-    card: "rgb(64, 102, 122)", // Light gray-blue for the bottom navbar
+    card: "rgb(90, 107, 117)", // Light gray-blue for the bottom navbar
     text: "rgb(216, 217, 218)", // Light text for contrast
-    border: "rgb(64, 102, 122)", // Matching the new card color
+    border: "rgb(90, 107, 117)", // Matching the new card color
     notification: "rgb(255, 69, 58)",
   },
 };
@@ -46,10 +46,10 @@ const CustomLightTheme: ExtendedTheme = {
   colors: {
     primary: "rgb(33, 49, 65)", // Adjust if needed
     secondary: "rgb(201, 178, 104)", // Closer to the yellow highlights
-    background: "rgb(114, 139, 149)", // Matched to the Figma background
+    background: "rgb(90, 107, 117)", // Matched to the Figma background
     card: "rgb(33, 49, 65)", // Navbar color
     text: "rgb(224, 224, 224)", // Black for readability
-    border: "rgb(114, 139, 149)", // Border matching background
+    border: "rgb(90, 107, 117)", // Border matching background
     notification: "rgb(255, 69, 58)",
   },
 };

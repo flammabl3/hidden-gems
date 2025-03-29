@@ -11,7 +11,7 @@ import {
   TextInput, ScrollView, KeyboardAvoidingView, Platform 
 } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from "expo-linear-gradient";
@@ -28,7 +28,93 @@ export default function Index() {
   const router = useRouter();
   const { t } = useTranslation();
 
-  const styles = makeStyles();
+  
+  const {colors} = useTheme() as ExtendedTheme;
+  const styles = useMemo(() => 
+    StyleSheet.create({
+      container: {
+        flex: 1,
+        justifyContent: 'space-between',
+        backgroundColor: colors.background,
+      },
+      imageContainer: {
+        height: '45%',
+        alignItems: "center",
+        justifyContent: "center",
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+      },
+      image: {
+        width: '70%',
+        height: '100%',
+      },
+      keyboardContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        paddingHorizontal: '5%',
+      },
+      scrollContainer: {
+        flexGrow: 1, 
+        justifyContent: 'center',
+        paddingVertical: '5%',
+      },
+      inputFieldsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        paddingVertical: '5%',
+      },
+      inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderBottomWidth: 2,
+        borderColor: colors.border,
+        backgroundColor: colors.background,
+        color: colors.text,
+        paddingHorizontal: '5%',
+        width: '90%', 
+        height: 55, 
+        marginVertical: 12, 
+        borderRadius: 8,
+      },
+      input: {
+        flex: 1,
+        height: '100%',
+        paddingHorizontal: 10,        
+        color: colors.text,
+      },
+      signInButton: {
+        backgroundColor: colors.primary,
+        paddingVertical: '4%',
+        borderRadius: 8,
+        alignItems: "center",
+        width: '50%', 
+        alignSelf: 'center',
+        marginBottom: '5%',
+      },
+      signInText: {
+        color: colors.text,
+        fontSize: 18,
+        fontWeight: "bold",
+      },
+      footer: {
+        flexDirection: "column",
+        alignItems: "center",
+        marginBottom: '5%',
+      },
+      accountText: {
+        color: colors.text, 
+        fontSize: 16,
+      },
+      createText: {
+        color: colors.primary,
+        fontWeight: "bold",
+      },
+      debugText: {
+        color: colors.text,
+        marginTop: 5,
+      }
+    }), [colors]
+  );
 
   async function signInWithEmail() {
     const { success, error } = await login(email, password);
@@ -36,11 +122,10 @@ export default function Index() {
     if (error) {
       alert('Login failed: ' + error);
     } else if (success) {
-      router.push('./main-app/explore/explore');
+      router.push('./main-app/explore');
     }
   }
-
- 
+  
 
   return (
     <SafeAreaProvider>
@@ -74,11 +159,11 @@ export default function Index() {
               <View style={styles.inputFieldsContainer}>
                 {/* Email Input */}
                 <View style={styles.inputContainer}>
-                  <MaterialCommunityIcons name="email-outline" size={24} color="#201A23" />
+                  <MaterialCommunityIcons name="email-outline" size={24} color={colors.text} />
                   <TextInput
                     style={styles.input}
                     placeholder="Enter your email"
-                    placeholderTextColor="#2B3B49"
+                    placeholderTextColor={colors.text}
                     autoCapitalize="none"
                     value={email}
                     onChangeText={setEmail}
@@ -87,11 +172,11 @@ export default function Index() {
     
                 {/* Password Input */}
                 <View style={styles.inputContainer}>
-                  <MaterialCommunityIcons name="lock-outline" size={24} color="#201A23" />
+                  <MaterialCommunityIcons name="lock-outline" size={24} color={colors.text} />
                   <TextInput
                     style={styles.input}
                     placeholder="Enter your password"
-                    placeholderTextColor="#2B3B49"
+                    placeholderTextColor={colors.text}
                     secureTextEntry={!showPassword}
                     value={password}
                     onChangeText={setPassword}
@@ -100,7 +185,7 @@ export default function Index() {
                     <MaterialCommunityIcons 
                       name={showPassword ? 'eye-outline' : 'eye-off-outline'} 
                       size={24} 
-                      color="#201A23" 
+                      color={colors.text} 
                     />
                   </TouchableOpacity>
                 </View>
@@ -126,7 +211,7 @@ export default function Index() {
                 Don't have an account? <Text style={styles.createText}>Create now</Text>
               </Text>
             </TouchableOpacity>
-            {/*<TouchableOpacity onPress={() => router.push('./main-app/explore/explore')}>
+            {/*<TouchableOpacity onPress={() => router.push('./main-app/explore/')}>
               <Text>go to app</Text>
             </TouchableOpacity>*/}
           </View>
@@ -135,94 +220,4 @@ export default function Index() {
       </View>
     </SafeAreaProvider>
   );
-}
-
-
-const makeStyles = () => {
-  const {colors} = useTheme() as ExtendedTheme;
-  const styles = StyleSheet.create({
-    
-    container: {
-      flex: 1,
-      justifyContent: 'space-between',
-      backgroundColor: colors.background,
-    },
-    imageContainer: {
-      height: '45%',
-      alignItems: "center",
-      justifyContent: "center",
-      borderBottomLeftRadius: 10,
-      borderBottomRightRadius: 10,
-    },
-    image: {
-      width: '70%',
-      height: '100%',
-    },
-    keyboardContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      paddingHorizontal: '5%',
-    },
-    scrollContainer: {
-      flexGrow: 1, 
-      justifyContent: 'center',
-      paddingVertical: '5%',
-    },
-    inputFieldsContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      paddingVertical: '5%',
-    },
-    inputContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderBottomWidth: 2,
-      borderColor: '#201A23',
-      backgroundColor: colors.background,
-      paddingHorizontal: '5%',
-      width: '90%', 
-      height: 55, 
-      marginVertical: 12, 
-      borderRadius: 8,
-    },
-    input: {
-      flex: 1,
-      height: '100%',
-      paddingHorizontal: 10,
-      color: '#201A23',
-    },
-    signInButton: {
-      backgroundColor: colors.primary,
-      paddingVertical: '4%',
-      borderRadius: 8,
-      alignItems: "center",
-      width: '50%', 
-      alignSelf: 'center',
-      marginBottom: '5%',
-    },
-    signInText: {
-      color: "#FFFFFF",
-      fontSize: 18,
-      fontWeight: "bold",
-    },
-    footer: {
-      flexDirection: "column",
-      alignItems: "center",
-      marginBottom: '5%',
-    },
-    accountText: {
-      color: "#D8D9DA", 
-      fontSize: 16,
-    },
-    createText: {
-      color: "#213141",
-      fontWeight: "bold",
-    },
-    debugText: {
-      color: "#D8D9DA",
-      marginTop: 5,
-    }
-  });
-
-  return styles;
 }

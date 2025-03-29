@@ -119,6 +119,9 @@ export default function Explore() {
             justifyContent: "center",
             alignItems: "center",
           },
+          listText: {
+            color: colors.text,
+          },
           listItemHighlight: {
             backgroundColor: colors.secondary,
           },
@@ -148,9 +151,9 @@ export default function Explore() {
             data={places}
             renderItem={({item, index})=>{return(
                 <TouchableOpacity style={[styles.listItem, index == selectedIndex && styles.listItemHighlight]} onPress={() => handlePlacePress(item, index)}>
-                    <Text> {item.name} </Text>
-                    {item.description && <Text> {item.description} </Text>}
-                    <Text>{item.address ? item.address : `${item.location.latitude}, ${item.location.longitude}`}</Text>
+                    <Text style={styles.listText}> {item.name} </Text>
+                    {item.description && <Text style={styles.listText}> {item.description} </Text>}
+                    <Text style={styles.listText}>{item.address ? item.address : `${item.location.latitude}, ${item.location.longitude}`}</Text>
                 </TouchableOpacity>
             )}}
             />

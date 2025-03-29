@@ -1,12 +1,12 @@
 import React, { useState, useContext } from "react";
 import { View, Text, Switch, TouchableOpacity } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { useTheme } from "@react-navigation/native";
+import { ExtendedTheme, useTheme } from "@react-navigation/native";
 import { ThemeToggleContext } from "../../_layout";
 import { useTranslation } from "react-i18next";
 
 const SettingsScreen = () => {
-  const { colors, dark } = useTheme();
+  const { colors, dark } = useTheme() as ExtendedTheme;
   const toggleTheme = useContext(ThemeToggleContext);
   const { t, i18n } = useTranslation();
 
@@ -19,7 +19,7 @@ const SettingsScreen = () => {
     }
   };
 
-  const handleLanguageChange = (lang) => {
+  const handleLanguageChange = (lang: string) => {
     setLanguage(lang);
     i18n.changeLanguage(lang);
   };

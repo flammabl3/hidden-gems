@@ -5,8 +5,9 @@ import { Text } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { ExtendedTheme } from "@react-navigation/native";
 
-import Explore from "../app/main-app/explore/explore";
+import Explore from "../app/main-app/explore";
 import Settings from "../app/main-app/settings";
+import Upload from "../app/main-app/upload";
 import { useTranslation } from "react-i18next";
 
 const Tab = createBottomTabNavigator();
@@ -35,6 +36,14 @@ export default function MyTabs() {
                 size={size}
               />
             );
+          } else if (route.name === "Upload") {
+            return (
+              <MaterialCommunityIcons
+                name="upload"
+                color={color}
+                size={size}
+              />
+            );
           } else {
             return (
               <MaterialCommunityIcons
@@ -47,6 +56,9 @@ export default function MyTabs() {
         },
         tabBarLabel: ({ color }) => {
           let label = "";
+          if (route.name === "Upload") {
+            label = t("Upload");
+          } 
           if (route.name === "Explore") {
             label = t("explore");
           } else if (route.name === "Settings") {
@@ -60,6 +72,7 @@ export default function MyTabs() {
       })}
     >
       {/* tab names come from the app/main-app/ folder */}
+      <Tab.Screen name="Upload" component={Upload} />
       <Tab.Screen name="Explore" component={Explore} />
       <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
