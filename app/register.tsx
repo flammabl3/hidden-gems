@@ -8,6 +8,7 @@ import { useRouter } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../database/auth-context";
+import { useTranslation } from 'react-i18next';
 
 export default function Register() {
   const { height, width } = Dimensions.get("window");
@@ -19,8 +20,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
-
-  const styles = makeStyles();
+  const { t } = useTranslation();
 
   
   const { register, loading } = useAuth();
@@ -176,92 +176,85 @@ export default function Register() {
   );
 }
 
-
-import { ExtendedTheme, useTheme } from "@react-navigation/native";
-const makeStyles = () => {
-  const {colors} = useTheme() as ExtendedTheme;
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.background,
-    },
-    imageContainer: {
-      height: '45%',
-      alignItems: "center",
-      justifyContent: "center",
-      borderBottomLeftRadius: 10,
-      borderBottomRightRadius: 10,
-    },
-    image: {
-      width: '70%',
-      height: '100%',
-    },
-    scrollContainer: {
-      flexGrow: 1, 
-      justifyContent: 'center',
-      paddingVertical: '5%',
-    },
-    inputFieldsContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      paddingVertical: '5%',
-    },
-    row: {
-      alignSelf: 'center',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      width: '80%',
-    },
-    halfWidth: {
-      width: '48%',
-    },
-    inputContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      alignSelf: 'center',
-      borderBottomWidth: 2,
-      borderColor: '#201A23',
-      backgroundColor: colors.background,
-      paddingHorizontal: '5%',
-      width: '80%', 
-      height: 55, 
-      marginVertical: 12, 
-      borderRadius: 8,
-    },
-    input: {
-      flex: 1,
-      height: '100%',
-      paddingHorizontal: 10,
-      color: '#201A23',
-    },
-    createAccountButton: {
-      backgroundColor: colors.primary,
-      paddingVertical: '4%',
-      borderRadius: 8,
-      alignItems: "center",
-      width: '50%', 
-      alignSelf: 'center',
-      marginBottom: '5%',
-    },
-    createAccountText: {
-      color: "#FFFFFF",
-      fontSize: 18,
-      fontWeight: "bold",
-    },
-    footer: {
-      flexDirection: "column",
-      alignItems: "center",
-      marginBottom: '5%',
-    },
-    accountText: {
-      color: "#D6D6D6",
-      fontSize: 16,
-    },
-    signInText: {
-      fontWeight: 'bold',
-      color: '#213141',
-    },
-  });
-
-  return styles;
-}
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#5A6B75",
+  },
+  imageContainer: {
+    height: '45%',
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  image: {
+    width: '70%',
+    height: '100%',
+  },
+  scrollContainer: {
+    flexGrow: 1, 
+    justifyContent: 'center',
+    paddingVertical: '5%',
+  },
+  inputFieldsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingVertical: '5%',
+  },
+  row: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '80%',
+  },
+  halfWidth: {
+    width: '48%',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderBottomWidth: 2,
+    borderColor: '#201A23',
+    backgroundColor: '#5A6B75',
+    paddingHorizontal: '5%',
+    width: '80%', 
+    height: 55, 
+    marginVertical: 12, 
+    borderRadius: 8,
+  },
+  input: {
+    flex: 1,
+    height: '100%',
+    paddingHorizontal: 10,
+    color: '#201A23',
+  },
+  createAccountButton: {
+    backgroundColor: "#213141",
+    paddingVertical: '4%',
+    borderRadius: 8,
+    alignItems: "center",
+    width: '50%', 
+    alignSelf: 'center',
+    marginBottom: '5%',
+  },
+  createAccountText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  footer: {
+    flexDirection: "column",
+    alignItems: "center",
+    marginBottom: '5%',
+  },
+  accountText: {
+    color: "#D6D6D6",
+    fontSize: 16,
+  },
+  signInText: {
+    fontWeight: 'bold',
+    color: '#213141',
+  },
+});

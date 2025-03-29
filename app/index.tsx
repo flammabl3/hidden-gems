@@ -16,7 +16,8 @@ import { useRouter } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../database/auth-context";
-
+import { useTranslation } from 'react-i18next';
+import { ExtendedTheme, useTheme } from "@react-navigation/native";
 
 export default function Index() {
   const { height, width } = Dimensions.get("window");  
@@ -25,9 +26,10 @@ export default function Index() {
   const { login, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation();
 
   const styles = makeStyles();
-  
+
   async function signInWithEmail() {
     const { success, error } = await login(email, password);
 
@@ -136,7 +138,6 @@ export default function Index() {
 }
 
 
-import { ExtendedTheme, useTheme } from "@react-navigation/native";
 const makeStyles = () => {
   const {colors} = useTheme() as ExtendedTheme;
   const styles = StyleSheet.create({
