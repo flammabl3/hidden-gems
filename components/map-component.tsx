@@ -7,16 +7,20 @@ import * as Location from 'expo-location';
 import { Region } from 'react-native-maps';
 import supabase from '../database/supabase';
 
-type Place = {
+
+export type Place = {
   name: string,
   description?: string,
   location: {
     latitude: number,
     longitude: number,
   },
-  image?: string,
-}
-
+  address?: string,
+  img_url?: string,
+  long_description?: string,
+  place_link?: string,
+  price?: number
+};
 
 type MapProps = {
   initialRegion: Region | null;
@@ -32,43 +36,48 @@ const MapComponent = forwardRef<MapView, MapProps>(({ initialRegion, places, set
   // a custom map style to hide google labels.
   const mapStyle = require('../assets/json/map-style.json');
 
+  const [placesRetrieved, setPlacesRetrieved ]= useState(0);
 
   
+  async function getPlaces() {
+    // only retrieve 20 places at once!
+    const { data, error } = await supabase
+    .from("places")
+    .select("name, address, description, long_description, place_link, coordinate_lat, coordinate_long, img_url, price")
+    .range(placesRetrieved, placesRetrieved+20); 
+
+    if (error) {
+      console.error('Error fetching places:', error.message);
+    }
+
+    if (!data) {
+      console.error('No places found');
+    }
+
+    // map to place and push.
+    else {
+      const retrievedPlaces = data.map((item) => ({
+        name: item.name, 
+        description: item.description,
+        location: 
+        {
+          longitude: item.coordinate_long, 
+          latitude: item.coordinate_lat
+        },
+        address: item.address,
+        img_url: item.img_url,
+        long_description: item.long_description,
+        place_link: item.place_link,
+        price: item.price
+      }));
+      setPlaces(retrievedPlaces);
+      setPlacesRetrieved((prev) => prev+20);
+    }
+      
+  }
   
   useEffect(() => {
-
-    async function getPlaces() {
-      const { data, error } = await supabase
-      .from("places")
-      .select("name, address, description, coordinate_lat, coordinate_long"); 
-
-      if (error) {
-        console.error('Error fetching places:', error.message);
-      }
-
-      if (!data) {
-        console.error('No places found');
-      }
-
-      // map to place and push.
-      else {
-        const retrievedPlaces = data.map((item) => ({
-          name: item.name, 
-          description: item.description,
-          location: 
-          {
-            longitude: item.coordinate_long, 
-            latitude: item.coordinate_lat
-          },
-          address: item.address
-        }));
-        setPlaces(retrievedPlaces);
-      }
-        
-    }
-    
     getPlaces();
-
   }, []);
 
 

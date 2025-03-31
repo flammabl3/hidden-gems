@@ -47,9 +47,9 @@ const CustomLightTheme: ExtendedTheme = {
     primary: "rgb(33, 49, 65)", // Adjust if needed
     secondary: "rgb(201, 178, 104)", // Closer to the yellow highlights
     background: "rgb(90, 107, 117)", // Matched to the Figma background
-    card: "rgb(33, 49, 65)", // Navbar color
+    card: "#0A1A29", // Navbar color
     text: "rgb(224, 224, 224)", // Black for readability
-    border: "rgb(90, 107, 117)", // Border matching background
+    border: "rgb(99, 142, 167)", // Border matching background
     notification: "rgb(255, 69, 58)",
   },
 };

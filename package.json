@@ -13,8 +13,8 @@
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-picker/picker": "2.9.0",
     "@react-navigation/bottom-tabs": "^7.3.1",
+    "@react-navigation/stack": "^7.2.3",
     "@supabase/supabase-js": "^2.49.1",
-    "@ui-kitten/components": "^5.3.1",
     "expo": "~52.0.38",
     "expo-linear-gradient": "^14.0.2",
     "expo-localization": "^16.0.1",
@@ -25,7 +25,6 @@
     "react": "18.3.1",
     "react-i18next": "^15.4.1",
     "react-native": "0.76.7",
-    "react-native-fast-image": "^8.6.3",
     "react-native-maps": "^1.20.1",
     "react-native-svg": "^15.11.2"
   },
