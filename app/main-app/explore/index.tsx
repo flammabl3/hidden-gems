@@ -1,163 +1,28 @@
-import MapComponent from "../../../components/map-component";
-import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
-import { ExtendedTheme, useTheme } from "@react-navigation/native";
-import * as Location from 'expo-location';
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useAuth } from "../../../database/auth-context";
-import MapView from "react-native-maps";
-import { useTranslation } from "react-i18next";
+import React from 'react';
+import { createStackNavigator, Header } from '@react-navigation/stack';
+import ExploreMain from './explore';
+import PlacePage from './place-page';
+import { useEffect } from 'react';
 
-type Place = {
-    name: string,
-    description?: string,
-    location: {
-      latitude: number,
-      longitude: number,
-    },
-    address?: string,
-    image?: string,
-}
+const Stack = createStackNavigator();
 
-export default function Explore() {
-    const { colors } = useTheme() as ExtendedTheme;
-    const { t } = useTranslation();
-    const [location, setLocation] = useState<Location.LocationObject | null>(null);
-    const [errorMsg, setErrorMsg] = useState<string | null>(null);
-    const { getUserInfo } = useAuth();
-    const [userInfo, setUserInfo] = useState<{ first_name: string; last_name: string } | null>(null);
-    const [places, setPlaces] = useState<Place[]>([]);
-    const [selectedIndex, setSelectedIndex] = useState(-1);
-
-    const [focusedLocation, setFocusedLocation] = useState<{
-        latitude: number;
-        longitude: number;
-        latitudeDelta: number;
-        longitudeDelta: number;
-      } | null>(null);
-
-    const flatListRef = useRef<FlatList>(null);
-    const mapRef = useRef<MapView>(null);
-
-
-    useEffect(() => {
-        const initialize = async () => {
-            // Get user location
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-            setErrorMsg('Permission to access location was denied');
-            return;
-            }
-
-            const location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-            const userRegion = {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-                latitudeDelta: 0.06,
-                longitudeDelta: 0.06,
-              };
-              setFocusedLocation(userRegion);
-
-            mapRef.current?.animateToRegion(userRegion, 1000);
-
-            const { success, data } = await getUserInfo();
-            if (success && data) setUserInfo(data);
-        };
-    
-        initialize();
-      }, []);
-    
-
-    const handlePlacePress = (place: Place, index: number) => {
-        // Scroll FlatList to the selected item
-        handleMarkerPress(index);
-        
-        // Animate map to the selected location
-        mapRef.current?.animateToRegion({
-          latitude: place.location.latitude,
-          longitude: place.location.longitude,
-          latitudeDelta: 0.06,
-          longitudeDelta: 0.06,
-        });
-    };
-
-    const handleMarkerPress = (index: number) => {
-        flatListRef.current?.scrollToIndex({ index, animated: true });
-        setSelectedIndex(index);
-    };
-
-    const styles = useMemo(
-      () =>
-        StyleSheet.create({
-          topText: {
-            fontSize: 20,
-            color: colors.text,
-            padding: 10,
-          },
-          container: {
-            height: "100%",
-            width: "100%",
-            backgroundColor: colors.background,
-          },
-          mapContainer: {
-            height: "50%",
-            width: "90%",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            alignSelf: "center",
-          },
-          list: {
-            width: "100%",
-            padding: 10,
-            justifyContent: "center",
-          },
-          listItem: {
-            backgroundColor: colors.card,
-            width: "100%",
-            height: 90,
-            marginVertical: 10,
-            justifyContent: "center",
-            alignItems: "center",
-          },
-          listText: {
-            color: colors.text,
-          },
-          listItemHighlight: {
-            backgroundColor: colors.secondary,
-          },
-        }),
-      [colors]
-    );
-
-    return(
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.topText}>
-        {t("helloUser", { name: userInfo?.first_name || "" })}
-      </Text>
-            {errorMsg && <Text>{errorMsg}</Text>}
-
-            <View style={styles.mapContainer}>
-                <MapComponent 
-                ref={mapRef}
-                initialRegion={focusedLocation}
-                places={places}
-                setPlaces={setPlaces}
-                onMarkerPress={handleMarkerPress}
-                />
-            </View>
-            <FlatList
-            ref={flatListRef}
-            contentContainerStyle={styles.list}
-            data={places}
-            renderItem={({item, index})=>{return(
-                <TouchableOpacity style={[styles.listItem, index == selectedIndex && styles.listItemHighlight]} onPress={() => handlePlacePress(item, index)}>
-                    <Text style={styles.listText}> {item.name} </Text>
-                    {item.description && <Text style={styles.listText}> {item.description} </Text>}
-                    <Text style={styles.listText}>{item.address ? item.address : `${item.location.latitude}, ${item.location.longitude}`}</Text>
-                </TouchableOpacity>
-            )}}
-            />
-
-        </SafeAreaView>
-    )
+export default function ExploreStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      <Stack.Screen 
+        name="ExploreMain" 
+        component={ExploreMain} 
+        options={{ title: 'Explore Main' }} 
+      />
+      <Stack.Screen 
+        name="PlacePage" 
+        component={PlacePage} 
+        options={{ title: 'Place' }} 
+      />
+    </Stack.Navigator>
+  );
 }

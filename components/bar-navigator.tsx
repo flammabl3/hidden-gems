@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text } from "react-native";
@@ -9,6 +9,7 @@ import Explore from "../app/main-app/explore";
 import Settings from "../app/main-app/settings";
 import Upload from "../app/main-app/upload";
 import { useTranslation } from "react-i18next";
+import { router } from "expo-router";
 
 const Tab = createBottomTabNavigator();
 
@@ -18,8 +19,13 @@ export default function MyTabs() {
   const { colors } = useTheme() as ExtendedTheme;
   const { t } = useTranslation();
 
+  useEffect(() =>
+    router.push("/main-app/explore")
+  )
   return (
     <Tab.Navigator
+      initialRouteName="Explore"
+      backBehavior="initialRoute"
       screenOptions={({ route }) => ({
         headerShown: false, // Hides the header for all screens
         tabBarIcon: ({ color, size }) => {
@@ -67,13 +73,13 @@ export default function MyTabs() {
           return <Text style={{ color, fontSize: 12 }}>{label}</Text>;
         },
         theme: { useTheme },
-        // ignore the error here, typing issues.
         tabBarActiveTintColor: colors.secondary,
       })}
     >
       {/* tab names come from the app/main-app/ folder */}
+      
+      <Tab.Screen name="Explore" component={Explore}/>
       <Tab.Screen name="Upload" component={Upload} />
-      <Tab.Screen name="Explore" component={Explore} />
       <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
   );

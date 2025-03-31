@@ -122,7 +122,7 @@ export default function Index() {
     if (error) {
       alert('Login failed: ' + error);
     } else if (success) {
-      router.push('./main-app/explore');
+      router.push('/main-app/explore');
     }
   }
   
@@ -211,9 +211,6 @@ export default function Index() {
                 Don't have an account? <Text style={styles.createText}>Create now</Text>
               </Text>
             </TouchableOpacity>
-            {/*<TouchableOpacity onPress={() => router.push('./main-app/explore/')}>
-              <Text>go to app</Text>
-            </TouchableOpacity>*/}
           </View>
   
         </SafeAreaView>
