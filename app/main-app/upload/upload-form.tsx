@@ -5,13 +5,15 @@ import {
   Modal
 } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigation, useRouter } from "expo-router";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { ExtendedTheme, NavigationProp, useTheme } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
 import { useLocation } from "../../../components/location-context";
+import MapComponent from "../../../components/map-component";
+import MapPickerComponent from "../../../components/map-picker-component";
 
 type coordinate =
 {
@@ -29,12 +31,41 @@ export default function UploadForm() {
   const [coordinates, setCoordinates] = useState<coordinate>({longitude: null, latitude: null});
   const [locationAddress, setLocationAddress] = useState('');
   const [description, setDescription] = useState('');
+  const [longDescription, setLongDescription] = useState('');
   const [link, setLink] = useState('');
   const [image, setImage] = useState<{ uri: string } | null>(null);
+  const [price, setPrice] = useState(0);
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const { location, error } = useLocation();
+  const [focusRegion, setFocusRegion] = useState<{
+    latitude: number;
+    longitude: number;
+    latitudeDelta: number;
+    longitudeDelta: number;
+  } | null>(null);
+
+  useEffect(() => {
+    let focus = null;
+    if (location && error == undefined) {
+      focus = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.06,
+        longitudeDelta: 0.06, 
+      }
+    } else {
+      focus = {
+        latitude: 1,
+        longitude: 1,
+        latitudeDelta: 50.0,
+        longitudeDelta: 50.0, 
+      }
+    }
+
+    setFocusRegion(focus);
+  }, [])
 
   type RootStackParamList = {
     Explore: undefined;
@@ -43,8 +74,10 @@ export default function UploadForm() {
       address: string | undefined,
       coordinates: coordinate,
       description: string,
+      long_description: string,
       place_link: string,
       image_uri: string | undefined,
+      price: number | undefined,
     }};
   };
   
@@ -76,6 +109,13 @@ export default function UploadForm() {
         justifyContent: 'center',
         backgroundColor: colors.background,
         paddingHorizontal: '5%',
+      }, 
+      mapContainer: {
+        height: "50%",
+        width: "90%",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        alignSelf: "center",
       },
       inputContainer: {
         flexDirection: 'row',
@@ -94,6 +134,10 @@ export default function UploadForm() {
         height: '100%',
         paddingHorizontal: 10,
         color: colors.text,
+      },
+      buttonRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
       },
       dropArea: {
         height: 150,
@@ -126,7 +170,45 @@ export default function UploadForm() {
         color: colors.text,
         fontSize: 18,
         fontWeight: "bold",
-      }
+      },
+      modalContainer: {
+        display: 'flex',
+        flexGrow: 1,
+        flexDirection: 'column',
+        backgroundColor: colors.background,
+        height: '100%',
+        width: '100%',
+        position: 'absolute',
+        alignItems: 'center',
+        justifyContent: 'center'
+      },
+      modalCard: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity: 1,
+        backgroundColor: colors.card,
+        color: colors.text,
+        height: '90%',
+        width: '90%',
+        borderRadius: 20
+      },
+      modalText: {
+        color: colors.text
+      },
+      modalButton: {
+        backgroundColor: colors.secondary,
+        paddingVertical: '4%',
+        borderRadius: 8,
+        alignItems: "center",
+        width: '50%',
+        alignSelf: 'center',
+        marginTop: '10%',
+      },
+      modalButtonText: {
+        color: colors.card
+      },
     }), [colors]
   );
 
@@ -139,12 +221,16 @@ export default function UploadForm() {
         onRequestClose={() => {
           setShowModal(false);
         }}>
-        <View >
-          <View >
-            <Text>Hello World!</Text>
-            <TouchableOpacity
+        <View style={styles.modalContainer}>
+          <View style={styles.modalCard}>
+            <View style={styles.mapContainer}>
+              <MapPickerComponent 
+              initialRegion={focusRegion}
+              />
+            </View>
+            <TouchableOpacity style={styles.modalButton}
               onPress={() => setShowModal(false)}>
-              <Text>Hide Modal</Text>
+              <Text style={styles.modalButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -163,7 +249,6 @@ export default function UploadForm() {
             {/* Location Name */}
             <View style={styles.inputContainer}>
               <MaterialCommunityIcons
-                name="map-marker-outline"
                 size={24}
                 color={colors.text}
               />
@@ -177,48 +262,57 @@ export default function UploadForm() {
             </View>
 
             {/* coordinates */}
-            <View style={styles.inputContainer}>
-              <MaterialCommunityIcons
-                name="map-marker-outline"
-                size={24}
-                color={colors.text}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Longitude"
-                placeholderTextColor={colors.text}
-                value={coordinates?.longitude?.toString()}
-                onChangeText={(value) =>
-                  setCoordinates((prev) => ({
-                    ...prev,
-                    longitude: parseFloat(value) || null,
-                    latitude: prev?.latitude || null,
-                  }))
-                }
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Latitude"
-                placeholderTextColor={colors.text}
-                value={coordinates?.latitude?.toString()}
-                onChangeText={(value) =>
-                  setCoordinates((prev) => ({
-                    ...prev,
-                    longitude: prev?.longitude || 0,
-                    latitude: parseFloat(value) || 0,
-                  }))
-                }
-              />
-              <TouchableOpacity
-                onPress={() =>
-                  setCoordinates({
-                    longitude: location?.coords.longitude || null,
-                    latitude: location?.coords.latitude || null,
-                  })
-                }
-              >
-                <Text>Use Current Location</Text>
-              </TouchableOpacity>
+            <View>
+              <View style={styles.inputContainer}>
+                <MaterialCommunityIcons
+                  name="map-marker-outline"
+                  size={24}
+                  color={colors.text}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Longitude"
+                  placeholderTextColor={colors.text}
+                  value={coordinates?.longitude?.toString()}
+                  onChangeText={(value) =>
+                    setCoordinates((prev) => ({
+                      ...prev,
+                      longitude: parseFloat(value) || null,
+                      latitude: prev?.latitude || null,
+                    }))
+                  }
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Latitude"
+                  placeholderTextColor={colors.text}
+                  value={coordinates?.latitude?.toString()}
+                  onChangeText={(value) =>
+                    setCoordinates((prev) => ({
+                      ...prev,
+                      longitude: prev?.longitude || 0,
+                      latitude: parseFloat(value) || 0,
+                    }))
+                  }
+                />
+              </View>
+              <View style={styles.buttonRow}>
+                <TouchableOpacity style={styles.nextButton}
+                  onPress={() =>
+                    setCoordinates({
+                      longitude: location?.coords.longitude || null,
+                      latitude: location?.coords.latitude || null,
+                    })
+                  }
+                >
+                  <Text style={styles.dropText}>Use Current Location</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.nextButton}
+                onPress={() => setShowModal(true)}>
+                  <Text style={styles.dropText}>Pick from Map</Text>
+                </TouchableOpacity>
+                {showMapModal()}
+              </View>
             </View>
 
             {/* Location Address */}
@@ -257,7 +351,31 @@ export default function UploadForm() {
               )}
             </TouchableOpacity>
 
-            {/* Description */}
+            {/* Short Description */}
+            <View
+              style={[
+                styles.inputContainer
+              ]}
+            >
+              <MaterialCommunityIcons
+                name="text-box-outline"
+                size={22}
+                color={colors.text}
+              />
+              <TextInput
+                style={[
+                  styles.input,
+                  { textDecorationLine: "underline" },
+                ]}
+                placeholder="Short Description"
+                placeholderTextColor={colors.text}
+                multiline
+                value={description}
+                onChangeText={setDescription}
+              />
+            </View>
+
+            {/* Long Description */}
             <View
               style={[
                 styles.inputContainer,
@@ -281,11 +399,11 @@ export default function UploadForm() {
                   styles.multilineInput,
                   { textDecorationLine: "underline" },
                 ]}
-                placeholder="Description"
+                placeholder="Detailed Description"
                 placeholderTextColor={colors.text}
                 multiline
-                value={description}
-                onChangeText={setDescription}
+                value={longDescription}
+                onChangeText={setLongDescription}
               />
             </View>
 
@@ -306,6 +424,24 @@ export default function UploadForm() {
               />
             </View>
 
+             {/* Price */}
+            <View style={styles.inputContainer}>
+              <MaterialCommunityIcons
+                name="currency-usd"
+                size={24}
+                color={colors.text}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Price of Admission"
+                placeholderTextColor={colors.text}
+                autoCapitalize="none"
+                keyboardType="numeric"
+                value={price.toString()}
+                onChangeText={(text) => setPrice(parseFloat(text) || 0)}
+              />
+            </View>
+
             {/* Next Button */}
             <TouchableOpacity
               style={styles.nextButton}
@@ -316,8 +452,10 @@ export default function UploadForm() {
                     address: locationAddress,
                     coordinates: coordinates,
                     description: description,
+                    long_description: longDescription,
                     place_link: link,
                     image_uri: image?.uri,
+                    price: price,
                   },
                 });
               }}

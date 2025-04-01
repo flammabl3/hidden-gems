@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 const Stack = createStackNavigator();
 
 export default function UploadStack() {
-  
   return (
     <Stack.Navigator
       screenOptions={{
@@ -22,7 +21,7 @@ export default function UploadStack() {
       <Stack.Screen 
         name="UploadPreviewScreen" 
         component={UploadPreviewScreen} 
-        options={{ title: 'Upload Preview' }} 
+        options={{ title: '' }} 
       />
     </Stack.Navigator>
   );
