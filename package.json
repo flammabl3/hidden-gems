@@ -16,6 +16,7 @@
     "@react-navigation/stack": "^7.2.3",
     "@supabase/supabase-js": "^2.49.1",
     "expo": "~52.0.38",
+    "expo-image-picker": "^16.0.6",
     "expo-linear-gradient": "^14.0.2",
     "expo-localization": "^16.0.1",
     "expo-location": "~18.0.8",

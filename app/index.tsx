@@ -1,9 +1,8 @@
-// packages : npm expo install , npm install react-native-maps , npm install expo-linear-gradient , npm install expo-router, npm install expo-location, npm install @supabase/supabase-js,
+// packages : npm expo install , npm install react-native-maps , npm install expo-linear-gradient , npm install expo-router, npm install expo-location, npm install @supabase/supabase-js,@react-navigation/stack,expo-image-picker
 /* todo: 
-1.add the regex to email and password fields
 2.add the forgot password button and do the recovery question logic
-3.hash the password before saving it in the database
 4.use session to track if the user is logged in or not
+
 */
 
 import { 
