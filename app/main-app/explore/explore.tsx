@@ -8,11 +8,11 @@ import MapView from "react-native-maps";
 import { useTranslation } from "react-i18next";
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { hide } from "expo-router/build/utils/splash";
+import { useLocation } from "../../../components/location-context";
 
 export default function Explore() {
     const { colors } = useTheme() as ExtendedTheme;
     const { t } = useTranslation();
-    const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const { getUserInfo } = useAuth();
     const [userInfo, setUserInfo] = useState<{ first_name: string; last_name: string } | null>(null);
@@ -37,33 +37,33 @@ export default function Explore() {
     const mapRef = useRef<MapView>(null);
 
 
+    const { location, error } = useLocation();
     useEffect(() => {
-        const initialize = async () => {
-            // Get user location
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-            setErrorMsg('Permission to access location was denied');
-            return;
-            }
-
-            const location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-            const userRegion = {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-                latitudeDelta: 0.06,
-                longitudeDelta: 0.06,
-              };
-              setFocusedLocation(userRegion);
-
-            mapRef.current?.animateToRegion(userRegion, 1000);
-
-            const { success, data } = await getUserInfo();
-            if (success && data) setUserInfo(data);
-        };
-    
-        initialize();
-      }, []);
+      const initialize = async () => {
+        //location comes from our context
+        if (location) {
+          const userRegion = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.06,
+            longitudeDelta: 0.06,
+          };
+          setFocusedLocation(userRegion);
+  
+          mapRef.current?.animateToRegion(userRegion, 1000);
+        }
+  
+        if (error) {
+          setErrorMsg(error);
+        }
+  
+        let { error: errorInfo, success, data } = await getUserInfo();
+        if (success && data) setUserInfo(data);
+        else if (errorInfo) setErrorMsg(errorInfo);
+      };
+  
+      initialize();
+    }, [location, error]);
     
 
     const handlePlacePress = (place: Place, index: number) => {

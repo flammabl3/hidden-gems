@@ -1,30 +1,57 @@
-/*import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { ExtendedTheme, useNavigation, useTheme } from '@react-navigation/native';
 import supabase from '../../../database/supabase';
+import { router } from 'expo-router';
 
-const UploadPreviewScreen = ({ route }) => {
+const UploadPreviewScreen = ({ route }: { route: any }) => {
   const navigation = useNavigation();
-  const { name, description, address, place_link, image } = route.params;
+  const { colors } = useTheme() as ExtendedTheme;
+  const { name, description, address, place_link, image_uri } = route.params;
+
+  const styles = useMemo(() =>
+      StyleSheet.create({
+        container: { flex: 1, backgroundColor: colors.background, padding: 20 },
+        title: { fontSize: 28, fontWeight: 'bold', color: colors.text },
+        subTitle: { fontSize: 24, fontWeight: '600', marginBottom: 10, color: colors.text },
+        image: {
+          width: '100%',
+          height: 200,
+          borderRadius: 15,
+          marginBottom: 20,
+        },
+        descTitle: { fontSize: 20, fontWeight: 'bold', color: colors.text, marginBottom: 5 },
+        desc: { fontSize: 16, color: colors.text, marginBottom: 20 },
+        button: {
+          backgroundColor: colors.background,
+          padding: 15,
+          marginHorizontal: 2,
+          borderRadius: 12,
+          alignItems: 'center',
+        },
+        buttonText: { color: colors.text, fontWeight: 'bold', fontSize: 16 },
+      }), [colors]
+    );
 
   const handleConfirmUpload = async () => {
-    if (!image || !name || !description) {
+    if (!image_uri || !name || !description) {
       Alert.alert('Missing data', 'Name, description, and image are required.');
       return;
     }
 
     try {
       // Generate unique file name
-      const fileExt = image.uri.split('.').pop();
+      const fileExt = image_uri.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
+
+      const response = await fetch(image_uri);
+      const fileBody = await response.blob();
 
       // Upload to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('places-images') // Your bucket name
-        .upload(fileName, {
-          uri: image.uri,
-          type: 'image/jpeg', // or image.type if available
-          name: fileName,
+        .upload(fileName, fileBody, {
+          contentType: "image/jpeg", // Set the appropriate content type
         });
 
       if (uploadError) throw uploadError;
@@ -48,7 +75,7 @@ const UploadPreviewScreen = ({ route }) => {
       if (insertError) throw insertError;
 
       Alert.alert('Success', 'Place uploaded successfully!');
-      navigation.navigate('/explore'); // or wherever you'd like to go next
+      router.push("/")
 
     } catch (error) {
       console.error('Upload error:', error);
@@ -61,7 +88,7 @@ const UploadPreviewScreen = ({ route }) => {
       <Text style={styles.title}>Review</Text>
       <Text style={styles.subTitle}>{name}</Text>
 
-      <Image source={{ uri: image.uri }} style={styles.image} />
+      <Image source={{ uri: image_uri }} style={styles.image} />
 
       <Text style={styles.descTitle}>Description</Text>
       <Text style={styles.desc}>{description}</Text>
@@ -69,31 +96,13 @@ const UploadPreviewScreen = ({ route }) => {
       <TouchableOpacity style={styles.button} onPress={handleConfirmUpload}>
         <Text style={styles.buttonText}>Confirm and Upload</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={navigation.goBack}>
+        <Text style={styles.buttonText}>Go Back</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#6E8690', padding: 20 },
-  title: { fontSize: 28, fontWeight: 'bold', color: 'white' },
-  subTitle: { fontSize: 24, fontWeight: '600', marginBottom: 10, color: 'white' },
-  image: {
-    width: '100%',
-    height: 200,
-    borderRadius: 15,
-    marginBottom: 20,
-  },
-  descTitle: { fontSize: 20, fontWeight: 'bold', color: 'white', marginBottom: 5 },
-  desc: { fontSize: 16, color: 'white', marginBottom: 20 },
-  button: {
-    backgroundColor: '#1C2A36',
-    padding: 15,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  buttonText: { color: 'white', fontWeight: 'bold', fontSize: 16 },
-});
-
-export default UploadPreviewScreen;*/
+export default UploadPreviewScreen;
 
 

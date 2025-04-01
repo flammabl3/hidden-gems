@@ -7,7 +7,7 @@ import { ExtendedTheme } from "@react-navigation/native";
 
 import Explore from "../app/main-app/explore";
 import Settings from "../app/main-app/settings";
-import Upload from "../app/main-app/upload";
+import UploadStack from "../app/main-app/upload";
 import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 
@@ -19,15 +19,14 @@ export default function MyTabs() {
   const { colors } = useTheme() as ExtendedTheme;
   const { t } = useTranslation();
 
-  useEffect(() =>
-    router.push("/main-app/explore")
-  )
+
   return (
     <Tab.Navigator
       initialRouteName="Explore"
       backBehavior="initialRoute"
       screenOptions={({ route }) => ({
         headerShown: false, // Hides the header for all screens
+        tabBarHideOnKeyboard: true,
         tabBarIcon: ({ color, size }) => {
           // Set icon based on the route name
           if (route.name === "Explore") {
@@ -63,7 +62,7 @@ export default function MyTabs() {
         tabBarLabel: ({ color }) => {
           let label = "";
           if (route.name === "Upload") {
-            label = t("Upload");
+            label = t("upload");
           } 
           if (route.name === "Explore") {
             label = t("explore");
@@ -79,7 +78,7 @@ export default function MyTabs() {
       {/* tab names come from the app/main-app/ folder */}
       
       <Tab.Screen name="Explore" component={Explore}/>
-      <Tab.Screen name="Upload" component={Upload} />
+      <Tab.Screen name="Upload" component={UploadStack} />
       <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
   );
