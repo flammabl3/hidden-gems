@@ -1,5 +1,5 @@
 import { 
-    StyleSheet, View, Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Image 
+    StyleSheet, View, Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Image, ScrollView 
   } from "react-native";
   import { MaterialCommunityIcons } from '@expo/vector-icons';
   import { useState, useMemo } from "react";
@@ -106,91 +106,94 @@ import {
           <SafeAreaView style={styles.container} edges={["top"]}>
             <KeyboardAvoidingView
               behavior={Platform.OS === "ios" ? "padding" : "height"}
-              style={{ flex: 1, justifyContent: 'center' }}
+              style={{ flex: 1 }}
             >
-              {/* Location Name */}
-              <View style={styles.inputContainer}>
-                <MaterialCommunityIcons name="map-marker-outline" size={24} color={colors.text} />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Location Name"
-                  placeholderTextColor={colors.text}
-                  value={locationName}
-                  onChangeText={setLocationName}
-                />
-              </View>
+              <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+                {/* Location Name */}
+                <View style={styles.inputContainer}>
+                  <MaterialCommunityIcons name="map-marker-outline" size={24} color={colors.text} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Location Name"
+                    placeholderTextColor={colors.text}
+                    value={locationName}
+                    onChangeText={setLocationName}
+                  />
+                </View>
   
-              {/* Location Address */}
-              <View style={styles.inputContainer}>
-                <MaterialCommunityIcons name="map-outline" size={24} color={colors.text} />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Location Address"
-                  placeholderTextColor={colors.text}
-                  value={locationAddress}
-                  onChangeText={setLocationAddress}
-                />
-              </View>
+                {/* Location Address */}
+                <View style={styles.inputContainer}>
+                  <MaterialCommunityIcons name="map-outline" size={24} color={colors.text} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Location Address"
+                    placeholderTextColor={colors.text}
+                    value={locationAddress}
+                    onChangeText={setLocationAddress}
+                  />
+                </View>
   
-              {/* Drop Area */}
-              <TouchableOpacity style={styles.dropArea} onPress={pickImage}>
-                {image ? (
-                  <Image source={{ uri: image.uri }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
-                ) : (
-                  <>
-                    <MaterialCommunityIcons name="image-outline" size={32} color={colors.text} style={{ marginBottom: 8 }} />
-                    <Text style={styles.dropText}>Tap to select an image</Text>
-                  </>
-                )}
-              </TouchableOpacity>
+                {/* Drop Area */}
+                <TouchableOpacity style={styles.dropArea} onPress={pickImage}>
+                  {image ? (
+                    <Image source={{ uri: image.uri }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+                  ) : (
+                    <>
+                      <MaterialCommunityIcons name="image-outline" size={32} color={colors.text} style={{ marginBottom: 8 }} />
+                      <Text style={styles.dropText}>Tap to select an image</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
   
-              {/* Description */}
-              <View style={[styles.inputContainer, { height: 120, alignItems: 'flex-start', paddingTop: 10, borderWidth: 2 }]}>
-                <MaterialCommunityIcons name="text-box-outline" size={22} color={colors.text} style={{ marginTop: 5 }} />
-                <TextInput
-                  style={[styles.input, styles.multilineInput, { textDecorationLine: 'underline' }]}
-                  placeholder="Description"
-                  placeholderTextColor={colors.text}
-                  multiline
-                  value={description}
-                  onChangeText={setDescription}
-                />
-              </View>
+                {/* Description */}
+                <View style={[styles.inputContainer, { height: 120, alignItems: 'flex-start', paddingTop: 10, borderWidth: 2 }]}>
+                  <MaterialCommunityIcons name="text-box-outline" size={22} color={colors.text} style={{ marginTop: 5 }} />
+                  <TextInput
+                    style={[styles.input, styles.multilineInput, { textDecorationLine: 'underline' }]}
+                    placeholder="Description"
+                    placeholderTextColor={colors.text}
+                    multiline
+                    value={description}
+                    onChangeText={setDescription}
+                  />
+                </View>
   
-              {/* Link */}
-              <View style={styles.inputContainer}>
-                <MaterialCommunityIcons name="link-variant" size={24} color={colors.text} />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Reference Link"
-                  placeholderTextColor={colors.text}
-                  autoCapitalize="none"
-                  value={link}
-                  onChangeText={setLink}
-                />
-              </View>
+                {/* Link */}
+                <View style={styles.inputContainer}>
+                  <MaterialCommunityIcons name="link-variant" size={24} color={colors.text} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Reference Link"
+                    placeholderTextColor={colors.text}
+                    autoCapitalize="none"
+                    value={link}
+                    onChangeText={setLink}
+                  />
+                </View>
   
-              {/* Next Button */}
-              <TouchableOpacity 
-                style={styles.nextButton}
-                onPress={() => {
-                  router.push({
-                    pathname: '/preview-upload',
-                    params: {
-                      name: locationName,
-                      address: locationAddress,
-                      description,
-                      place_link: link,
-                      image_uri: image?.uri,
-                    }
-                  });
-                }}
-              >
-                <Text style={styles.nextText}>Next</Text>
-              </TouchableOpacity>
+                {/* Next Button */}
+                <TouchableOpacity 
+                  style={styles.nextButton}
+                  onPress={() => {
+                    router.push({
+                      pathname: '/preview-upload',
+                      params: {
+                        name: locationName,
+                        address: locationAddress,
+                        description,
+                        place_link: link,
+                        image_uri: image?.uri,
+                      }
+                    });
+                  }}
+                >
+                  <Text style={styles.nextText}>Next</Text>
+                </TouchableOpacity>
+              </ScrollView>
             </KeyboardAvoidingView>
           </SafeAreaView>
         </View>
       </SafeAreaProvider>
     );
   }
+  

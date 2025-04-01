@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, Text, Switch, TouchableOpacity } from "react-native";
+import { View, Text, Switch, TouchableOpacity, Dimensions } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { ExtendedTheme, useTheme } from "@react-navigation/native";
 import { ThemeToggleContext } from "../../_layout";
@@ -24,25 +24,28 @@ const SettingsScreen = () => {
     i18n.changeLanguage(lang);
   };
 
+  const { width, height } = Dimensions.get("window");
+  const smallDevice = width < 375; // Adjust based on your target devices
+
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20 }}>
+    <View style={{ flex: 1, backgroundColor: colors.background, padding: width * 0.05 }}>
       <Text
         style={{
-          fontSize: 24,
+          fontSize: smallDevice ? width * 0.06 : width * 0.07,
           fontWeight: "bold",
           color: colors.text,
           textAlign: "center",
-          marginBottom: 20,
+          marginBottom: height * 0.03,
         }}
       >
         {t("settings")}
       </Text>
 
-      <Text style={{ color: colors.text, fontSize: 18 }}>{t("language")}</Text>
+      <Text style={{ color: colors.text, fontSize: width * 0.05 }}>{t("language")}</Text>
       <Picker
         selectedValue={language}
         onValueChange={(itemValue) => handleLanguageChange(itemValue)}
-        style={{ color: colors.text }}
+        style={{ color: colors.text, width: "100%", height: height * 0.06 }}
       >
         <Picker.Item label="English" value="en" />
         <Picker.Item label="French" value="fr" />
@@ -54,11 +57,11 @@ const SettingsScreen = () => {
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          marginVertical: 10,
-          marginTop: 80,
+          marginVertical: height * 0.02,
+          marginTop: height * 0.1,
         }}
       >
-        <Text style={{ color: colors.text, fontSize: 18 }}>
+        <Text style={{ color: colors.text, fontSize: width * 0.05 }}>
           {t("notifications")}
         </Text>
         <Switch
@@ -75,11 +78,11 @@ const SettingsScreen = () => {
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          marginVertical: 10,
-          marginTop: 80,
+          marginVertical: height * 0.02,
+          marginTop: height * 0.1,
         }}
       >
-        <Text style={{ color: colors.text, fontSize: 18 }}>
+        <Text style={{ color: colors.text, fontSize: width * 0.05 }}>
           {t("appearance")}
         </Text>
         <View
@@ -95,11 +98,11 @@ const SettingsScreen = () => {
             onPress={() => handleSelectTheme(true)}
             style={{
               backgroundColor: dark ? colors.secondary : colors.card,
-              paddingVertical: 8,
-              paddingHorizontal: 16,
+              paddingVertical: height * 0.02,
+              paddingHorizontal: width * 0.04,
             }}
           >
-            <Text style={{ color: colors.text, fontSize: 16 }}>
+            <Text style={{ color: colors.text, fontSize: width * 0.045 }}>
               {t("dark")}
             </Text>
           </TouchableOpacity>
@@ -107,11 +110,11 @@ const SettingsScreen = () => {
             onPress={() => handleSelectTheme(false)}
             style={{
               backgroundColor: !dark ? colors.secondary : colors.card,
-              paddingVertical: 8,
-              paddingHorizontal: 16,
+              paddingVertical: height * 0.02,
+              paddingHorizontal: width * 0.04,
             }}
           >
-            <Text style={{ color: colors.text, fontSize: 16 }}>
+            <Text style={{ color: colors.text, fontSize: width * 0.045 }}>
               {t("light")}
             </Text>
           </TouchableOpacity>
@@ -121,12 +124,13 @@ const SettingsScreen = () => {
       <TouchableOpacity
         style={{
           backgroundColor: "#D9534F",
-          padding: 10,
+          padding: width * 0.04,
           borderRadius: 5,
-          marginTop: 200,
+          marginTop: height * 0.2,
+          alignItems: "center",
         }}
       >
-        <Text style={{ color: "white", textAlign: "center", fontSize: 16 }}>
+        <Text style={{ color: "white", fontSize: width * 0.05 }}>
           {t("deleteAccount")}
         </Text>
       </TouchableOpacity>
