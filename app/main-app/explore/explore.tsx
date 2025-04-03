@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { ExtendedTheme, useTheme } from "@react-navigation/native";
 import * as Location from "expo-location";
@@ -18,6 +19,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { hide } from "expo-router/build/utils/splash";
 import { useLocation } from "../../../components/location-context";
 import supabase from "../../../database/supabase";
+import { Dropdown } from "react-native-element-dropdown";
 
 export default function Explore() {
   const { colors } = useTheme() as ExtendedTheme;
@@ -30,6 +32,15 @@ export default function Explore() {
   } | null>(null);
   const [places, setPlaces] = useState<Place[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  
+  const sortMethods = [
+    {label: "Name", value: "name"},
+    {label: "Price", value: "price"},
+    {label: "distance", value: ""}
+  ];
+
+  const [sortColumn, setSortColumn] = useState("name");
 
   type RootStackParamList = {
     Explore: undefined;
@@ -76,6 +87,10 @@ export default function Explore() {
     initialize();
   }, [location, error]);
 
+  useEffect(() => {
+    getPlaces(true);
+  }, [sortColumn]);
+
   const handlePlacePress = (place: Place, index: number) => {
     // Scroll FlatList to the selected item
     handleMarkerPress(index);
@@ -100,13 +115,14 @@ export default function Explore() {
 
   const [placesRetrieved, setPlacesRetrieved] = useState(0);
 
-  async function getPlaces() {
+  async function getPlaces(newList: boolean) {
     // only retrieve getLimit places at once!
     const { data, error } = await supabase
       .from("places")
       .select(
         "name, address, description, long_description, place_link, coordinate_lat, coordinate_long, img_url, price"
       )
+      .order(sortColumn, { ascending: true })
       .range(placesRetrieved, placesRetrieved + getLimit);
 
     if (error) {
@@ -132,8 +148,13 @@ export default function Explore() {
         place_link: item.place_link,
         price: item.price,
       }));
-      setPlaces(places.concat(retrievedPlaces));
-      setPlacesRetrieved((prev) => prev + getLimit + 1);
+      if(newList) {
+        setPlaces(retrievedPlaces);
+        setPlacesRetrieved(0);
+      } else {
+        setPlaces(places.concat(retrievedPlaces));
+        setPlacesRetrieved((prev) => prev + getLimit + 1);
+      }
     }
   }
 
@@ -196,9 +217,26 @@ export default function Explore() {
           width: "100%",
           height: "70%",
         },
+        emptyListContainer: {
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+        loaderContainer: {
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 20,
+        },
+        noDataText: {
+          marginTop: 10,
+          fontSize: 16,
+          color: colors.secondary,
+        }
       }),
     [colors]
   );
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -215,41 +253,92 @@ export default function Explore() {
           onMarkerPress={handleMarkerPress}
         />
       </View>
-      <FlatList
-        ref={flatListRef}
-        contentContainerStyle={styles.list}
-        data={places}
-        extraData={selectedIndex} // rerender on more data
-        renderItem={({ item, index }) => {
-          return (
-            <TouchableOpacity
-              style={[
-                styles.listItem,
-                index == selectedIndex && styles.listItemSelected,
-              ]}
-              onPress={() => handlePlacePress(item, index)}
-            >
-              <Image
-                style={styles.listImage}
-                source={
-                  item.img_url
-                    ? { uri: item.img_url }
-                    : require("../../../assets/hiddengems-logo.png")
-                }
-              />
-              <View style={styles.listTextContainer}>
-                <Text style={styles.listText}> {item.name} </Text>
-                <Text style={styles.listText}>
-                  {" "}
-                  {item.price > 0 ? item.price : "Free"}{" "}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          );
-        }}
-        onEndReached={getPlaces}
-        onEndReachedThreshold={0.8}
-      />
+        <View style={{width: "100%", display: "flex", flexDirection: "row", alignItems: "center", paddingHorizontal: 10, marginTop: 10}}>
+          <Text style={{
+              fontSize: 15,
+              color: colors.text,
+              padding: 10,
+            }}>Sort By:</Text>
+          <Dropdown
+            style={{
+              padding: 10,
+              width: "30%",
+              borderColor: colors.border,
+              borderWidth: 1,
+              borderRadius: 8,
+              marginTop: "1%",
+              marginHorizontal: 10,
+              backgroundColor: colors.card,
+            }}
+            placeholderStyle={{
+              color: colors.text,
+            }}
+            selectedTextStyle={{
+              color: colors.text,
+            }}
+            itemContainerStyle={{
+              backgroundColor: colors.card,
+            }}
+            activeColor={colors.border}
+
+            iconStyle={{
+              width: 20,
+              height: 20,
+            }}
+            data={sortMethods}
+            labelField="label"
+            valueField="value"
+            value={sortColumn}
+            onChange={(item) => {
+              if (item.value !== sortColumn)
+                setSortColumn(item.value);
+            }}
+            itemTextStyle={{
+              color: colors.text,
+            }}
+          />
+        </View>
+        <FlatList
+          ref={flatListRef}
+          contentContainerStyle={styles.list}
+          data={places}
+          extraData={selectedIndex} // rerender on more data
+          renderItem={({ item, index }) => {
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.listItem,
+                  index == selectedIndex && styles.listItemSelected,
+                ]}
+                onPress={() => handlePlacePress(item, index)}
+              >
+                <Image
+                  style={styles.listImage}
+                  source={
+                    item.img_url
+                      ? { uri: item.img_url }
+                      : require("../../../assets/hiddengems-logo.png")
+                  }
+                />
+                <View style={styles.listTextContainer}>
+                  <Text style={styles.listText}> {item.name} </Text>
+                  <Text style={styles.listText}>
+                    {" "}
+                    {item.price > 0 ? item.price : "Free"}{" "}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+          onEndReached={() => getPlaces(false)}
+          onEndReachedThreshold={0.8}
+          ListEmptyComponent={() => (
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="large" />
+              <Text style={styles.noDataText}>{t("loading")}</Text>
+            </View>
+          )}
+        />
     </SafeAreaView>
   );
 }

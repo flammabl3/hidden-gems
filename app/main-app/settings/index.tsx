@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { View, Text, Switch, TouchableOpacity, Dimensions } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { Dropdown } from 'react-native-element-dropdown';
 import { ExtendedTheme, useTheme } from "@react-navigation/native";
 import { ThemeToggleContext } from "../../_layout";
 import { useTranslation } from "react-i18next";
@@ -19,13 +19,14 @@ const SettingsScreen = () => {
     }
   };
 
-  const handleLanguageChange = (lang: string) => {
-    setLanguage(lang);
-    i18n.changeLanguage(lang);
-  };
-
   const { width, height } = Dimensions.get("window");
   const smallDevice = width < 375; // Adjust based on your target devices
+
+  const languages = [
+    { label: "English", value: "en" },
+    { label: "French", value: "fr" },
+    { label: "Spanish", value: "es" },
+  ];
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background, padding: width * 0.05 }}>
@@ -42,15 +43,52 @@ const SettingsScreen = () => {
       </Text>
 
       <Text style={{ color: colors.text, fontSize: width * 0.05 }}>{t("language")}</Text>
-      <Picker
-        selectedValue={language}
-        onValueChange={(itemValue) => handleLanguageChange(itemValue)}
-        style={{ color: colors.text, width: "100%", height: height * 0.06 }}
-      >
-        <Picker.Item label="English" value="en" />
-        <Picker.Item label="French" value="fr" />
-        <Picker.Item label="Spanish" value="es" />
-      </Picker>
+      <Dropdown
+        style={{
+          height: height * 0.06,
+          borderColor: colors.border,
+          borderWidth: 1,
+          borderRadius: 8,
+          paddingHorizontal: width * 0.03,
+          marginBottom: height * 0.02,
+          backgroundColor: colors.card,
+        }}
+        placeholderStyle={{
+          fontSize: width * 0.045,
+          color: colors.text,
+        }}
+        selectedTextStyle={{
+          fontSize: width * 0.045,
+          color: colors.text,
+        }}
+        itemContainerStyle={{
+          backgroundColor: colors.card,
+        }}
+        activeColor={colors.border}
+        inputSearchStyle={{
+          height: height * 0.06,
+          borderColor: colors.border,
+          color: colors.text,
+          fontSize: width * 0.045,
+        }}
+        iconStyle={{
+          width: 20,
+          height: 20,
+        }}
+        data={languages}
+        maxHeight={height * 0.3}
+        labelField="label"
+        valueField="value"
+        value={language}
+        onChange={(item) => {
+          setLanguage(item.value);
+          i18n.changeLanguage(item.value);
+        }}
+        itemTextStyle={{
+          color: colors.text,
+          fontSize: width * 0.045,
+        }}
+      />
 
       <View
         style={{
