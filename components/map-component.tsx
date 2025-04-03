@@ -16,6 +16,7 @@ export type Place = {
   long_description?: string;
   place_link?: string;
   price?: number;
+  distance?: number;
 };
 
 type MapProps = {

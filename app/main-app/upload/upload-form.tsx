@@ -38,6 +38,11 @@ export default function UploadForm() {
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
+  const handleMarkerPlace = (coords: { latitude: number; longitude: number }) => {
+    console.log('Selected coordinates:', coords);
+    setCoordinates(coords);
+  };
+
   const { location, error } = useLocation();
   const [focusRegion, setFocusRegion] = useState<{
     latitude: number;
@@ -138,6 +143,7 @@ export default function UploadForm() {
       buttonRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center'
       },
       dropArea: {
         height: 150,
@@ -147,7 +153,7 @@ export default function UploadForm() {
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        marginVertical: 20,
+        marginBottom: 0,
         overflow: 'hidden',
       },
       dropText: {
@@ -165,6 +171,15 @@ export default function UploadForm() {
         width: '50%',
         alignSelf: 'center',
         marginTop: '10%',
+      },
+      button: {
+        backgroundColor: colors.primary,
+        paddingVertical: '4%',
+        borderRadius: 8,
+        alignItems: "center",
+        width: '40%',
+        alignSelf: 'center',
+        margin: 1,
       },
       nextText: {
         color: colors.text,
@@ -226,6 +241,7 @@ export default function UploadForm() {
             <View style={styles.mapContainer}>
               <MapPickerComponent 
               initialRegion={focusRegion}
+              onMarkerPlace={handleMarkerPlace}
               />
             </View>
             <TouchableOpacity style={styles.modalButton}
@@ -297,7 +313,7 @@ export default function UploadForm() {
                 />
               </View>
               <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.nextButton}
+                <TouchableOpacity style={styles.button}
                   onPress={() =>
                     setCoordinates({
                       longitude: location?.coords.longitude || null,
@@ -307,7 +323,7 @@ export default function UploadForm() {
                 >
                   <Text style={styles.dropText}>Use Current Location</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.nextButton}
+                <TouchableOpacity style={styles.button}
                 onPress={() => setShowModal(true)}>
                   <Text style={styles.dropText}>Pick from Map</Text>
                 </TouchableOpacity>
@@ -350,6 +366,13 @@ export default function UploadForm() {
                 </>
               )}
             </TouchableOpacity>
+            <TouchableOpacity style={styles.nextButton}
+                onPress={
+                  () => setImage(null)
+                }
+              >
+                <Text style={styles.dropText}>Clear Image</Text>
+              </TouchableOpacity>
 
             {/* Short Description */}
             <View

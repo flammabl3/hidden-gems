@@ -1,14 +1,18 @@
-import React, { useMemo } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { ExtendedTheme, useNavigation, useTheme } from '@react-navigation/native';
 import supabase from '../../../database/supabase';
 import { router } from 'expo-router';
 import { useAuth } from '../../../database/auth-context';
+import { decode } from 'base64-arraybuffer';
+import * as FileSystem from 'expo-file-system';
 
 const UploadPreviewScreen = ({ route }: { route: any }) => {
   const navigation = useNavigation();
   const { colors } = useTheme() as ExtendedTheme;
   const { name, description, long_description, coordinates, address, place_link, image_uri, price } = route.params.params;
+
+  const [ uploading, setUploading ] = useState(false);
 
   const { session } = useAuth();
 
@@ -46,35 +50,53 @@ const UploadPreviewScreen = ({ route }: { route: any }) => {
     );
 
   const handleConfirmUpload = async () => {
+    if (uploading)
+        return;
+    setUploading(true);
     if (!coordinates.latitude || !coordinates.longitude || !name || !description) {
       Alert.alert('Missing data', 'A name, coordinates, and a short description are required.');
+      setUploading(false);
       return;
     }
 
     try {
       // Generate unique file name
-      var publicUrl = null;
+      var imgUrl = null;
 
       if (image_uri) {
         const fileExt = image_uri.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
 
-        const response = await fetch(image_uri);
-        const fileBody = await response.blob();
+        const base64 = await FileSystem.readAsStringAsync(image_uri, { encoding: 'base64' });
 
         // Upload to Supabase Storage
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('places-images') // Your bucket name
-          .upload(fileName, fileBody, {
-            contentType: "image/jpeg", // Set the appropriate content type
-          });
 
-        if (uploadError) throw uploadError;
+        try {
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('place-images')
+            .upload(fileName, decode(base64),
+            {
+              contentType: "image/*",
+              upsert: false
+            }
+          );
+        
+          if (uploadError) {
+            console.error("Upload Error:", uploadError);
+            setUploading(false);
+            return;
+          } else {
+            console.log("Upload Success:", uploadData);
+          }
 
-        // Get the public URL
-        publicUrl = {
-          data: { publicUrl },
-        } = supabase.storage.from('places-images').getPublicUrl(fileName);
+          const { data: { publicUrl } } = supabase.storage.from('place-images').getPublicUrl(fileName);
+
+          imgUrl = publicUrl;
+        } catch (e) {
+          console.error("Unexpected Error:", e);
+          setUploading(false);
+          return;
+        }
       }
 
       const userId = session?.user?.id;
@@ -86,7 +108,7 @@ const UploadPreviewScreen = ({ route }: { route: any }) => {
           name,
           address: address || null,
           description,
-          img_url: publicUrl, // nullable
+          img_url: imgUrl, // nullable
           place_link: place_link || null,
           user_id: userId,
           coordinate_lat: coordinates.latitude,
@@ -99,11 +121,13 @@ const UploadPreviewScreen = ({ route }: { route: any }) => {
       if (insertError) throw insertError;
 
       Alert.alert('Success', 'Place uploaded successfully!');
+      setUploading(false);
       router.push("/main-app/")
 
     } catch (error) {
       console.error('Upload error:', error);
       Alert.alert('Error', 'Something went wrong during upload.');
+      setUploading(false);
     }
   };
 
@@ -135,8 +159,12 @@ const UploadPreviewScreen = ({ route }: { route: any }) => {
       </View>
       }
 
-      <TouchableOpacity style={styles.button} onPress={handleConfirmUpload}>
+      <TouchableOpacity style={styles.button} onPress={handleConfirmUpload} disabled={uploading}>
+        {!uploading ?
         <Text style={styles.buttonText}>Confirm and Upload</Text>
+        :
+        <ActivityIndicator size="large" />
+        }
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={navigation.goBack}>
         <Text style={styles.buttonText}>Go Back</Text>

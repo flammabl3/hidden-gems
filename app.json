@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "hidden-gems",
+    "scheme": "hidden-gems",
     "slug": "hidden-gems",
     "version": "1.0.0",
     "orientation": "portrait",

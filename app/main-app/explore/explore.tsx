@@ -34,11 +34,7 @@ export default function Explore() {
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   
-  const sortMethods = [
-    {label: "Name", value: "name"},
-    {label: "Price", value: "price"},
-    {label: "distance", value: ""}
-  ];
+
 
   const [sortColumn, setSortColumn] = useState("name");
 
@@ -55,6 +51,12 @@ export default function Explore() {
     latitudeDelta: number;
     longitudeDelta: number;
   } | null>(null);
+
+  const sortMethods = [
+    {label: "Name", value: "name"},
+    {label: "Price", value: "price, name"},
+    {label: "Distance", value: "distance"}
+  ];
 
   const flatListRef = useRef<FlatList>(null);
   const mapRef = useRef<MapView>(null);
@@ -89,7 +91,7 @@ export default function Explore() {
 
   useEffect(() => {
     getPlaces(true);
-  }, [sortColumn]);
+  }, [sortColumn, focusedLocation]);
 
   const handlePlacePress = (place: Place, index: number) => {
     // Scroll FlatList to the selected item
@@ -111,19 +113,29 @@ export default function Explore() {
     setSelectedIndex(index);
   };
 
-  const getLimit = 10;
+  // we do not know how to truly sort by distance in the db yet. functions are llikely needed.
+  const getLimit = 1000;
 
   const [placesRetrieved, setPlacesRetrieved] = useState(0);
 
   async function getPlaces(newList: boolean) {
+    if (!focusedLocation) return;
+
     // only retrieve getLimit places at once!
-    const { data, error } = await supabase
-      .from("places")
-      .select(
-        "name, address, description, long_description, place_link, coordinate_lat, coordinate_long, img_url, price"
-      )
-      .order(sortColumn, { ascending: true })
-      .range(placesRetrieved, placesRetrieved + getLimit);
+    
+    const { data, error } = sortColumn !== "distance" ? 
+      await supabase
+        .from("places")
+        .select(
+          '*'
+        )
+        .order(sortColumn, { ascending: true })
+      :
+       await supabase
+        .from("places")
+        .select(
+          '*'
+        );
 
     if (error) {
       console.error("Error fetching places:", error.message);
@@ -147,13 +159,23 @@ export default function Explore() {
         long_description: item.long_description,
         place_link: item.place_link,
         price: item.price,
+        distance: focusedLocation && 
+          haversineDistance(
+            item.coordinate_lat,
+            item.coordinate_long,
+            focusedLocation.latitude,
+            focusedLocation.longitude
+          ),
       }));
       if(newList) {
-        setPlaces(retrievedPlaces);
+        if ( sortColumn == "distance")
+          setPlaces([...retrievedPlaces].sort((a, b) => a.distance - b.distance));
+        else
+          setPlaces(retrievedPlaces);
         setPlacesRetrieved(0);
       } else {
-        setPlaces(places.concat(retrievedPlaces));
-        setPlacesRetrieved((prev) => prev + getLimit + 1);
+        setPlaces([...places, ...retrievedPlaces]);
+        setPlacesRetrieved(prev => prev + getLimit + 1);
       }
     }
   }
@@ -237,6 +259,17 @@ export default function Explore() {
     [colors]
   );
 
+  function haversineDistance(lat1 : number, lon1 : number, lat2 : number, lon2 : number) {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -270,6 +303,7 @@ export default function Explore() {
               marginHorizontal: 10,
               backgroundColor: colors.card,
             }}
+            placeholder={"select"}
             placeholderStyle={{
               color: colors.text,
             }}
@@ -322,16 +356,16 @@ export default function Explore() {
                 />
                 <View style={styles.listTextContainer}>
                   <Text style={styles.listText}> {item.name} </Text>
+                  <Text style={styles.listText}>{item.distance.toFixed(2)} km</Text>
                   <Text style={styles.listText}>
-                    {" "}
-                    {item.price > 0 ? item.price : "Free"}{" "}
+                    {item.price > 0 ? item.price : "Free"}
                   </Text>
                 </View>
               </TouchableOpacity>
             );
           }}
-          onEndReached={() => getPlaces(false)}
-          onEndReachedThreshold={0.8}
+          //onEndReached={() => getPlaces(false)}
+          //onEndReachedThreshold={0.8}
           ListEmptyComponent={() => (
             <View style={styles.loaderContainer}>
               <ActivityIndicator size="large" />

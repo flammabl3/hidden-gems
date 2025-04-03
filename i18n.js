@@ -15,6 +15,7 @@ const resources = {
       dark: "Dark",
       light: "Light",
       deleteAccount: "Delete Account",
+      upload: "Upload",
 
       // Auth / Index Page
       enterYourEmail: "Enter your email",
@@ -26,7 +27,8 @@ const resources = {
 
       // Explore Page
       helloUser: "Hello, {{name}}", // use as t('helloUser', { name: userName })
-      permissionDenied: "Permission to access location was denied"
+      permissionDenied: "Permission to access location was denied",
+      distance: "Distance"
     },
   },
   fr: {
